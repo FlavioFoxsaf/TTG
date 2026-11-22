@@ -4,7 +4,22 @@ import { SignJWT, jwtVerify } from 'jose';
 
 // Controle de acesso por perfil (RF03). A sessão é um token assinado em cookie httpOnly.
 
-export type Perfil = 'coordenacao' | 'orientador' | 'estudante';
+export type Perfil = 'coordenacao' | 'gestao' | 'execucao' | 'estudante';
+
+export const NOME_PERFIL: Record<Perfil, string> = {
+  coordenacao: 'Coordenação',
+  gestao: 'Orientador de gestão de projetos',
+  execucao: 'Orientador de execução técnica',
+  estudante: 'Estudante',
+};
+
+// Área inicial de cada perfil
+export const INICIO: Record<Perfil, string> = {
+  coordenacao: '/painel/acompanhamento',
+  gestao: '/painel/acompanhamento',
+  execucao: '/orientador',
+  estudante: '/estudante',
+};
 export type Sessao = { id: number; nome: string; perfil: Perfil };
 
 const COOKIE = 'sessao';

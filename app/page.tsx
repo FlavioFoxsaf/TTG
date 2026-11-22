@@ -1,8 +1,5 @@
 import { redirect } from 'next/navigation';
-import { lerSessao } from '@/lib/auth';
-
-// Cada perfil tem sua área inicial
-const INICIO = { coordenacao: '/coordenacao/resultados', orientador: '/orientador', estudante: '/estudante' };
+import { INICIO, lerSessao } from '@/lib/auth';
 
 export default async function Inicio() {
   const s = await lerSessao();

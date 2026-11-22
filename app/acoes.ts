@@ -4,7 +4,9 @@ import { redirect } from 'next/navigation';
 import bcrypt from 'bcryptjs';
 import { auditar, query, transacao } from '@/lib/db';
 import { criarSessao, encerrarSessao, exigirPerfil, type Sessao } from '@/lib/auth';
-import { cicloAtivo, comAviso, equipesDoUsuario, listarCriterios, listarEscala, membrosDaEquipe, papelPermitido } from '@/lib/dados';
+import {
+  cicloAtivo, comAviso, equipesDoUsuario, janelaAberta, listarCriterios, listarEscala, membrosDaEquipe, papelPermitido, usaEscala,
+} from '@/lib/dados';
 
 // RF03: login; o perfil vem do cadastro do usuário
 export async function entrar(form: FormData) {
@@ -27,12 +29,10 @@ export async function sair() {
 
 // RF05: grava as avaliações de orientadores e estudantes
 export async function salvarAvaliacoes(form: FormData) {
-  const s = await exigirPerfil('orientador', 'estudante');
+  const s = await exigirPerfil('gestao', 'execucao', 'estudante');
   const volta = String(form.get('volta'));
   const ciclo = await cicloAtivo();
-
-  // RN07: só dentro da janela
-  if (!ciclo?.janela_aberta) redirect(comAviso(volta, 'erro', 'A janela de avaliação está fechada.'));
+  if (!ciclo) redirect(comAviso(volta, 'erro', 'Não há ciclo avaliativo ativo.'));
 
   // RN05: só equipes sob responsabilidade do usuário
   const equipe = (await equipesDoUsuario(s, ciclo.id)).find((e) => e.id === Number(form.get('equipe')));
@@ -50,10 +50,14 @@ export async function salvarAvaliacoes(form: FormData) {
     const criterio = criterios.get(Number(criterioId));
     const valor = Number(bruto);
     const papel = criterio && papelPermitido(s, equipe, membros, avaliadoId, criterio);
-    const valido = criterio?.tipo === 'equipe' ? valor >= 0 && valor <= 10 : valoresEscala.includes(valor);
+    const valido = criterio && (usaEscala(criterio) ? valoresEscala.includes(valor) : valor >= 0 && valor <= 10);
     if (!papel || !valido) redirect(comAviso(volta, 'erro', 'Há valores inválidos no formulário.'));
+    // RN07: cada papel tem sua janela; o estudante só avalia quando a gestão libera
+    if (!janelaAberta(ciclo, papel)) redirect(comAviso(volta, 'erro', 'Esta avaliação não está liberada no momento.'));
     registros.push([ciclo.id, equipe.id, s.id, papel, avaliadoId, criterio!.id, valor]);
   }
+
+  const comentario = form.has('comentario') ? String(form.get('comentario')).trim() : null;
 
   await transacao(async (q) => {
     for (const r of registros) {
@@ -64,6 +68,15 @@ export async function salvarAvaliacoes(form: FormData) {
          do update set valor = excluded.valor, papel = excluded.papel, atualizado_em = now()`,
         r,
       );
+    }
+    if (comentario) {
+      await q(
+        `insert into comentario (ciclo_id, equipe_id, avaliador_id, texto) values ($1, $2, $3, $4)
+         on conflict (equipe_id, avaliador_id) do update set texto = excluded.texto, atualizado_em = now()`,
+        [ciclo.id, equipe.id, s.id, comentario],
+      );
+    } else if (comentario === '') {
+      await q('delete from comentario where equipe_id = $1 and avaliador_id = $2', [equipe.id, s.id]);
     }
   });
   await auditar(s.id, 'avaliacao', `${registros.length} valores na equipe ${equipe.nome}`);

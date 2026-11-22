@@ -17,6 +17,15 @@ export type Ciclo = {
   peso_colegas: number;
   ativo: boolean;
   janela_aberta: boolean;
+  // janelas do estudante (datas vazias = fechado)
+  auto_inicio: string | null;
+  auto_fim: string | null;
+  colegas_inicio: string | null;
+  colegas_fim: string | null;
+  nota_liberada_em: string | null;
+  auto_aberta: boolean;
+  colegas_aberta: boolean;
+  nota_liberada: boolean;
 };
 
 export type Criterio = { id: number; tipo: 'equipe' | 'individual'; nome: string; peso: number; fonte: string | null; ordem: number };
@@ -24,17 +33,25 @@ export type Equipe = {
   id: number;
   nome: string;
   lider_id: number | null;
+  cliente: string | null;
   orient_gestao_id: number | null;
   orient_execucao_id: number | null;
 };
 
-// RN07: a janela é verificada na data de Brasília
+// RN07: as janelas são verificadas na data de Brasília
+const HOJE = `(now() at time zone 'America/Sao_Paulo')::date`;
 const SELECT_CICLO = `
-  select *, (now() at time zone 'America/Sao_Paulo')::date between janela_inicio and janela_fim as janela_aberta
+  select *,
+    ${HOJE} between janela_inicio and janela_fim as janela_aberta,
+    coalesce(${HOJE} between auto_inicio and auto_fim, false) as auto_aberta,
+    coalesce(${HOJE} between colegas_inicio and colegas_fim, false) as colegas_aberta,
+    coalesce(${HOJE} >= nota_liberada_em, false) as nota_liberada
   from ciclo`;
 
 export const nomeCiclo = (c: Ciclo) => `Semestre ${c.semestre} · Fase ${c.fase} ${c.modalidade}`;
-export const dataBR = (d: string) => d.split('-').reverse().join('/');
+export const dataBR = (d: string | null) => (d ? d.split('-').reverse().join('/') : '—');
+export const periodoBR = (inicio: string | null, fim: string | null) =>
+  inicio && fim ? `de ${dataBR(inicio)} a ${dataBR(fim)}` : 'ainda não liberado';
 export const num = (n: number | null | undefined, casas = 2) =>
   n == null ? '—' : n.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
 
@@ -78,7 +95,7 @@ export const usuariosPorPerfil = (perfil: string) =>
 
 // RN05: equipes que o usuário pode ver e avaliar no ciclo
 export async function equipesDoUsuario(s: Sessao, cicloId: number): Promise<Equipe[]> {
-  if (s.perfil === 'orientador')
+  if (s.perfil === 'gestao' || s.perfil === 'execucao')
     return query<Equipe>(
       'select * from equipe where ciclo_id = $1 and $2 in (orient_gestao_id, orient_execucao_id) order by nome',
       [cicloId, s.id],
@@ -88,6 +105,20 @@ export async function equipesDoUsuario(s: Sessao, cicloId: number): Promise<Equi
      where e.ciclo_id = $1 and m.estudante_id = $2`,
     [cicloId, s.id],
   );
+}
+
+// Critérios avaliados na escala de conceitos (os demais recebem nota de 0 a 10):
+// os individuais e as perguntas do estudante sobre o projeto (formulário 360º usa 1 a 5)
+export const usaEscala = (c: Pick<Criterio, 'tipo' | 'fonte'>) => c.tipo === 'individual' || c.fonte === 'estudante';
+
+// Critérios que cada avaliador responde
+export function criteriosDoAvaliador(criterios: Criterio[], quem: 'gestao' | 'execucao' | 'estudante') {
+  const daFonte = (f: string | null) =>
+    f === null || f === quem || (f === 'orientador' && quem !== 'estudante') || (f === 'cliente' && quem === 'gestao');
+  return {
+    equipe: criterios.filter((c) => c.tipo === 'equipe' && c.fonte !== null && daFonte(c.fonte)),
+    individual: criterios.filter((c) => c.tipo === 'individual' && daFonte(c.fonte)),
+  };
 }
 
 // RN05: define o papel do avaliador, ou null se ele não puder avaliar aquele alvo
@@ -102,17 +133,27 @@ export function papelPermitido(
     avaliadoId === null ? criterio.tipo === 'equipe' : criterio.tipo === 'individual' && membros.includes(avaliadoId);
   if (!alvoValido) return null;
 
-  if (s.perfil === 'orientador') {
-    if (avaliadoId === null && criterio.fonte !== 'orientador') return null;
-    if (equipe.orient_gestao_id === s.id) return 'orient_gestao';
-    if (equipe.orient_execucao_id === s.id) return 'orient_execucao';
-    return null;
+  const f = criterio.fonte;
+  if (s.perfil === 'gestao' && equipe.orient_gestao_id === s.id) {
+    if (f === 'cliente') return 'cliente';
+    return f === null || f === 'orientador' || f === 'gestao' ? 'orient_gestao' : null;
+  }
+  if (s.perfil === 'execucao' && equipe.orient_execucao_id === s.id) {
+    return f === null || f === 'orientador' || f === 'execucao' ? 'orient_execucao' : null;
   }
   if (s.perfil === 'estudante' && membros.includes(s.id)) {
-    if (avaliadoId === null) return criterio.fonte === 'estudante' ? 'projeto' : null;
+    if (f !== null && f !== 'estudante') return null;
+    if (avaliadoId === null) return 'projeto';
     return avaliadoId === s.id ? 'auto' : 'colega';
   }
   return null;
+}
+
+// Janela que vale para cada papel (RN07)
+export function janelaAberta(c: Ciclo, papel: Papel) {
+  if (papel === 'projeto' || papel === 'auto') return c.auto_aberta;
+  if (papel === 'colega') return c.colegas_aberta;
+  return c.janela_aberta;
 }
 
 // Avaliações já registradas por um avaliador, no formato "avaliado|criterio" -> valor
@@ -194,3 +235,65 @@ export const listarResultados = (cicloId: number) =>
      where r.ciclo_id = $1 order by e.nome, u.nome`,
     [cicloId],
   );
+
+// Comentários sobre o trabalho em equipe
+export async function comentarioDoAvaliador(avaliadorId: number, equipeId: number) {
+  const [c] = await query<{ texto: string }>('select texto from comentario where avaliador_id = $1 and equipe_id = $2', [
+    avaliadorId,
+    equipeId,
+  ]);
+  return c?.texto ?? '';
+}
+
+// Sem o nome do autor: a avaliação é confidencial
+export const comentariosDoCiclo = (cicloId: number) =>
+  query<{ equipe_id: number; equipe: string; texto: string }>(
+    `select c.equipe_id, e.nome as equipe, c.texto from comentario c join equipe e on e.id = c.equipe_id
+     where c.ciclo_id = $1 order by e.nome, c.atualizado_em`,
+    [cicloId],
+  );
+
+// Acompanhamento do preenchimento: o que cada avaliador deveria ter respondido x o que respondeu
+export type Pendencia = {
+  equipe_id: number;
+  equipe: string;
+  avaliador_id: number;
+  avaliador: string;
+  papel: string; // descrição do papel do avaliador
+  esperado: number;
+  feito: number;
+};
+
+export async function acompanhamento(c: Ciclo): Promise<Pendencia[]> {
+  const [criterios, equipes, membros, feitos, usuarios] = await Promise.all([
+    listarCriterios(c.id),
+    listarEquipes(c.id),
+    query<{ equipe_id: number; estudante_id: number }>('select equipe_id, estudante_id from membro where ciclo_id = $1', [c.id]),
+    query<{ equipe_id: number; avaliador_id: number; total: number }>(
+      'select equipe_id, avaliador_id, count(*)::int as total from avaliacao where ciclo_id = $1 group by 1, 2',
+      [c.id],
+    ),
+    query<{ id: number; nome: string }>('select id, nome from usuario'),
+  ]);
+  const nome = (id: number) => usuarios.find((u) => u.id === id)?.nome ?? '—';
+  const feito = (equipeId: number, avaliadorId: number) =>
+    feitos.find((f) => f.equipe_id === equipeId && f.avaliador_id === avaliadorId)?.total ?? 0;
+
+  const linhas: Pendencia[] = [];
+  for (const e of equipes) {
+    const integrantes = membros.filter((m) => m.equipe_id === e.id).map((m) => m.estudante_id);
+    const n = integrantes.length;
+    const add = (avaliadorId: number | null, papel: string, esperado: number) => {
+      if (avaliadorId && esperado > 0)
+        linhas.push({ equipe_id: e.id, equipe: e.nome, avaliador_id: avaliadorId, avaliador: nome(avaliadorId), papel, esperado, feito: Math.min(feito(e.id, avaliadorId), esperado) });
+    };
+    const g = criteriosDoAvaliador(criterios, 'gestao');
+    const x = criteriosDoAvaliador(criterios, 'execucao');
+    const est = criteriosDoAvaliador(criterios, 'estudante');
+    add(e.orient_gestao_id, 'Orientador de gestão', g.equipe.length + g.individual.length * n);
+    add(e.orient_execucao_id, 'Orientador de execução', x.equipe.length + x.individual.length * n);
+    // cada estudante: projeto + autoavaliação + colegas
+    for (const m of integrantes) add(m, 'Estudante', est.equipe.length + est.individual.length * n);
+  }
+  return linhas;
+}

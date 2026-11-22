@@ -3,13 +3,29 @@
 
 export const FONTES = ['orient_gestao', 'orient_execucao', 'auto', 'colega'] as const;
 export type Fonte = (typeof FONTES)[number];
-export type Papel = Fonte | 'projeto';
+export type Papel = Fonte | 'projeto' | 'cliente';
 
 export const NOME_FONTE: Record<Fonte, string> = {
-  orient_gestao: 'Orientador de gestão',
+  orient_gestao: 'Orientador de gestão de projetos',
   orient_execucao: 'Orientador de execução técnica',
   auto: 'Autoavaliação',
   colega: 'Avaliação dos colegas',
+};
+
+export const NOME_PAPEL: Record<Papel, string> = {
+  ...NOME_FONTE,
+  projeto: 'Avaliação do projeto (estudante)',
+  cliente: 'Nota do cliente',
+};
+
+// Quem avalia cada critério (coluna criterio.fonte)
+export type FonteCriterio = 'orientador' | 'gestao' | 'execucao' | 'estudante' | 'cliente';
+export const NOME_FONTE_CRITERIO: Record<FonteCriterio, string> = {
+  orientador: 'os dois orientadores',
+  gestao: 'orientador de gestão',
+  execucao: 'orientador de execução',
+  estudante: 'estudantes',
+  cliente: 'cliente (lançada pela gestão)',
 };
 
 // Uma linha do report CSV
@@ -120,4 +136,44 @@ export function calcular(linhas: LinhaAvaliacao[], config: ConfigCalculo): Resul
     }
   }
   return resultados;
+}
+
+// Validação dos pesos (pedido na reunião de 19/11: bloquear quando não fecha 100%).
+// Os critérios individuais são agrupados por quem avalia: cada avaliador precisa fechar 100%.
+export type CriterioPeso = { tipo: 'equipe' | 'individual'; nome: string; peso: number; fonte: string | null };
+
+const PERTENCE: Record<string, (fonte: string | null) => boolean> = {
+  'orientador de gestão': (f) => f === null || f === 'orientador' || f === 'gestao',
+  'orientador de execução': (f) => f === null || f === 'orientador' || f === 'execucao',
+  estudantes: (f) => f === null || f === 'estudante',
+};
+
+const somaPesos = (lista: { peso: number }[]) => lista.reduce((s, c) => s + c.peso, 0);
+const fecha100 = (n: number) => Math.abs(n - 100) < 1e-6;
+
+export function somasDePeso(criterios: CriterioPeso[], pesosFontes: Record<Fonte, number>) {
+  const individuais = criterios.filter((c) => c.tipo === 'individual');
+  return {
+    equipe: somaPesos(criterios.filter((c) => c.tipo === 'equipe')),
+    fontes: somaPesos(Object.values(pesosFontes).map((peso) => ({ peso }))),
+    individual: Object.entries(PERTENCE)
+      .map(([grupo, pertence]) => {
+        const doGrupo = individuais.filter((c) => pertence(c.fonte));
+        return { grupo, soma: somaPesos(doGrupo), quantidade: doGrupo.length };
+      })
+      .filter((g) => g.quantidade > 0),
+  };
+}
+
+export function errosDePeso(criterios: CriterioPeso[], pesosFontes: Record<Fonte, number>): string[] {
+  const erros: string[] = [];
+  const fmt0 = (n: number) => fmt(n, n % 1 ? 2 : 0);
+  if (criterios.some((c) => !Number.isFinite(c.peso) || c.peso < 0)) erros.push('Há pesos vazios, negativos ou inválidos.');
+  const s = somasDePeso(criterios, pesosFontes);
+  if (!fecha100(s.fontes)) erros.push(`Os pesos das quatro fontes do conceito individual somam ${fmt0(s.fontes)}%, e não 100%.`);
+  if (!fecha100(s.equipe)) erros.push(`Os componentes da nota da equipe somam ${fmt0(s.equipe)}%, e não 100%.`);
+  for (const g of s.individual) {
+    if (!fecha100(g.soma)) erros.push(`Os critérios individuais avaliados por ${g.grupo} somam ${fmt0(g.soma)}%, e não 100%.`);
+  }
+  return erros;
 }
