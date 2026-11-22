@@ -1,0 +1,58 @@
+:root {
+  --azul: #1e3a64;
+  --azul-escuro: #13294b;
+  --laranja: #e85d04;
+  --fundo: #eef3f4;
+  --borda: #d9e1e8;
+  --texto: #1f2937;
+  --suave: #6b7280;
+  --erro: #b91c1c;
+  --ok: #15803d;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, Arial, sans-serif; font-size: 14px; color: var(--texto); background: var(--fundo); }
+a { color: var(--azul); }
+h2 { font-size: 17px; margin: 0 0 12px; }
+h3 { font-size: 15px; margin: 16px 0 8px; color: var(--azul); }
+
+/* Cabeçalho */
+/* Banner: foto do SENAI CIMATEC com uma camada azul por cima para o texto ficar legível */
+.cabecalho { background: linear-gradient(rgba(19, 41, 75, .2), rgba(19, 41, 75, .85)), url('/cimatec.png') center 5% / cover; color: #fff; min-height: 300px; padding: 14px 32px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px; }
+.cabecalho h1 { margin: 0; font-size: 24px; }
+.cabecalho small { opacity: .85; }
+.cabecalho button { background: none; border: 0; color: #fff; cursor: pointer; text-decoration: underline; padding: 0; font: inherit; }
+
+.conteudo { max-width: 1040px; margin: 0 auto; padding: 18px 16px 40px; }
+
+/* Abas */
+.abas { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.abas a { padding: 6px 16px; border-radius: 999px; background: #fff; border: 1px solid var(--borda); text-decoration: none; color: var(--azul); }
+.abas a.ativa { background: var(--azul); color: #fff; border-color: var(--azul); }
+
+.cartao { background: #fff; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); overflow-x: auto; }
+.linha { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+
+/* Tabelas */
+table { width: 100%; border-collapse: collapse; }
+th { background: #e6edf3; color: var(--azul); text-align: left; padding: 8px; font-size: 13px; }
+td { padding: 7px 8px; border-bottom: 1px solid var(--borda); vertical-align: middle; }
+td.num, th.num { text-align: right; }
+
+/* Formulários */
+label { display: block; font-weight: 600; color: var(--azul); margin-bottom: 4px; font-size: 13px; }
+input, select { font: inherit; padding: 7px 9px; border: 1px solid var(--borda); border-radius: 6px; background: #fff; }
+input[type=radio], input[type=checkbox] { padding: 0; }
+.campos { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px; }
+.campos input, .campos select { width: 100%; }
+.opcoes { display: flex; gap: 18px; flex-wrap: wrap; }
+.opcoes label { font-weight: normal; color: var(--texto); display: flex; gap: 6px; align-items: center; margin: 0; }
+
+.botao { background: var(--laranja); color: #fff; border: 0; border-radius: 6px; padding: 9px 20px; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+.botao.secundario { background: #fff; color: var(--azul); border: 1px solid var(--azul); }
+.botao:disabled { opacity: .5; cursor: not-allowed; }
+
+.aviso { padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; background: #fff7ed; border: 1px solid #fed7aa; white-space: pre-line; }
+.aviso.ok { background: #f0fdf4; border-color: #bbf7d0; color: var(--ok); }
+.suave { color: var(--suave); font-size: 12px; }
+.destaque { color: var(--laranja); font-weight: 700; }

@@ -1,0 +1,717 @@
+[00:00] Falou, gente. Boa noite, bom feriado.
+[00:03] Você também.
+[00:09] Agora pode falar besteira.
+[00:13] Isso aqui foi pra pegar o que a gente fala quando eles não estão.
+[00:19] Esperar a professora aí pra gente começar.
+[00:37] Contagem do professor Guilherme você tem?
+[00:39] Você fala com ele, com o Marco?
+[00:42] Não tenho, não. Quem tem eu acho que é Flávio,
+[00:45] porque ela me cobrava a planilha.
+[00:50] Tá entrando já.
+[00:52] Boa noite, pessoal. Tudo bem?
+[03:19] Boa noite, professor.
+[03:21] Boa noite, professor. Tudo tranquilo.
+[03:24] Me desculpem pelo atraso.
+[03:26] Meu computador resolveu reiniciar.
+[03:29] Eu não tive o que fazer.
+[03:33] Professor Guilherme, a gente vai efetuar a apresentação.
+[03:36] A gente já preparou um esboço
+[03:39] das telas do sistema, como seria.
+[03:42] A gente até já fez uma questão de autenticação,
+[03:45] tem umas notas lá, mas é pra não considerar nesse primeiro momento
+[03:49] a questão de peso.
+[03:51] Você vê que vai ter os campos abertos pra se colocar os pesos.
+[03:55] E aí eu vou começar aqui com a apresentação aqui no PowerPoint.
+[04:01] Vou compartilhar minha tela e aí eu vou mostrando também a tela.
+[04:07] Tá certo.
+[04:08] Falando ok, vi que mensagem do professor Leonardo Cardia.
+[04:13] Maravilha.
+[04:22] Então, com base no entendimento que nós obtivemos
+[04:27] naquela reunião inicial, a gente elaborou três perfis.
+[04:32] O perfil do coordenação, que abre o ciclo,
+[04:38] tem o cadastro das pessoas, que na realidade vai ser importando
+[04:42] as informações da matrícula, monta as equipes,
+[04:46] define o critério de pesos e acompanha o resultado.
+[04:49] O orientador, ele vai avaliar a equipe em cada critério
+[04:55] e o desempenho de cada integrante e os estudantes,
+[04:58] que avalia o projeto, a si mesmo, os colegas
+[05:03] e consulta a própria nota.
+[05:05] Tá, tudo bem.
+[05:08] Vamos só chamar aquele perfil de coordenação
+[05:11] de orientador de gestão de projetos
+[05:15] e o perfil de orientador de orientação de execução técnica,
+[05:19] que são dois orientadores.
+[05:21] Um é Gláucia e o outro é Leonardo Cardia.
+[05:25] Mas, no caso, o senhor não entra como coordenação, não,
+[05:29] porque o orientador ali tem dois orientadores,
+[05:32] porque o perfil de coordenação aqui é mais aquele
+[05:37] a pessoa que vai pegar a nota, a relação da matrícula,
+[05:42] vai dar a carga no sistema.
+[05:45] E o orientador aqui são os dois orientadores.
+[05:48] Ah, tem os dois tipos de orientadores,
+[05:50] eu consigo distinguir entre os dois, é isso?
+[05:52] É isso.
+[05:54] Eu vou passar em cada tela assim, aqui é só mais uma...
+[06:00] Tá bom, tudo bem, Carina.
+[06:02] A equipe de vocês tem quantos estudantes?
+[06:05] Nós somos três.
+[06:07] Você, Bruno e...
+[06:09] E Flávio, né?
+[06:11] Flávio, tá.
+[06:13] Na primeira tava você e Flávio, não é isso?
+[06:16] Isso, na primeira tava eu e Flávio, agora tá o Bruno aí.
+[06:21] Então, vamos aqui.
+[06:24] E tem... Então, essa parte aqui é da coordenação.
+[06:27] Depois eu vou mostrar realmente no sistema,
+[06:29] porque aqui é só um print, né?
+[06:30] Isso é mais pra dar uma introdução,
+[06:32] pra não ser uma tela direto do sistema.
+[06:35] Então, tem o cadastro em lote, por um arquivo CSV,
+[06:40] vai fazer a importação,
+[06:43] as colunas vai ter o nome, e-mail, matrícula, perfil do estudante, certo?
+[06:53] A senha, a gente pensou pra facilitar se é a própria senha do Google, né?
+[06:59] Quando a pessoa for se cadastrar,
+[07:02] se é a própria senha do Google acadêmico do Senasimotec.
+[07:07] Não sei se tem alguma restrição em relação a isso, né?
+[07:11] Não, não tem.
+[07:13] Certo, vamos pra próxima tela.
+[07:15] Mas tem como? Seria uma conexão via Google, é isso?
+[07:20] Seria no momento da autenticação,
+[07:23] a gente permitir a autenticação com o Google.
+[07:25] Como a gente faz em muitos aplicativos,
+[07:27] e esse aí é o usuário acadêmico, né?
+[07:31] Como muitas vezes a gente faz no próprio Canvas, né?
+[07:34] Que a gente bota lá o Google do Simatec,
+[07:39] e a gente autentica com o login do Simatec.
+[07:43] Tá certo.
+[07:48] Essa parte aqui é da equipe, ainda tá sim pra eliminar,
+[07:51] porque eu senti que ainda falta aí a questão de poder consultar as notas,
+[07:57] porque se for dar uma olhada,
+[08:01] eu botei equipe, líder, orientação do gestor,
+[08:06] do execução, o número de integrantes e editar.
+[08:11] Mas eu acho que seria interessante ter também
+[08:14] um perfil de como tá o preenchimento,
+[08:16] de estátua de preenchimento,
+[08:18] que falta em termos de dar nota,
+[08:21] e também a questão de permitir ver as notas,
+[08:26] se quiser entrar num integrante desse e ver.
+[08:29] Certo. Ali a equipe tem como nomear a equipe,
+[08:37] elas vão ser atribuídas por número.
+[08:39] Isso, depois outra tela vai dar uma olhada aí.
+[08:43] Então esse aí é um perfil realmente consolidado, né?
+[08:47] Tipo um resumo.
+[08:49] E ali a nova equipe permite aqui fazer o cadastramento das equipes.
+[08:56] O nome, pegou o orientador, o de execução e o líder.
+[09:01] E aí salva a equipe.
+[09:03] Certo. Tem como colocar o cliente do projeto?
+[09:11] Pode, mas ele também vai autenticar?
+[09:17] Não, não é só informação, né?
+[09:19] Não, é só informação, isso.
+[09:21] Que isso é uma das informações importantes de identificação das equipes.
+[09:26] Ela está gravando eu aqui para eu poder ficar notando.
+[09:29] Então vamos para a próxima tela.
+[09:32] Essa parte aqui é mais de configurações, né?
+[09:38] Não necessariamente vai ter essa ordem aí, né?
+[09:41] Estudante, equipe, configurações,
+[09:43] talvez a configuração venha no início, né?
+[09:45] Que é exatamente qual é o semestre, a modalidade,
+[09:48] qual a fase, o início, né?
+[09:51] Esse aqui você dá o peso da nota de cada um, né?
+[09:55] O gestão, a de execução, autoavaliação, os colegas.
+[10:00] E também em relação ao critério de peso dos módulos, né?
+[10:06] De planejamento, gestão cronológica, qualidade.
+[10:10] Isso aqui eu queria ver se a gente conseguia fazer alguma coisa
+[10:14] o máximo flexível possível.
+[10:16] Porque tem a questão presencial e tem a questão do...
+[10:22] Online, né?
+[10:24] E aí isso aí pode variar nessa questão de pesos, né?
+[10:29] Então a gente tentar fazer uma forma que a gente consiga
+[10:32] tornar essas coisas flexíveis, né?
+[10:34] E aí a gente ajusta a questão dos cálculos que vai ler isso aí
+[10:38] e vai fazer a questão, né?
+[10:40] E também da mensagem de erro, né?
+[10:42] Que talvez o peso botou errado,
+[10:44] então tem que ter algumas coisas aí de você sentir também
+[10:48] que você fez alguma alimentação no sistema errado,
+[10:51] que bloqueia algum tipo de coisa.
+[10:53] A falta, não sei, não fechou 100%, entendeu?
+[10:57] Certo. Planejamento tá.
+[11:06] Então isso aqui ainda não tá ajustado,
+[11:09] mas naquela tela, quando você bota a fazer a exportação,
+[11:12] ele viu assim desorganizado.
+[11:15] E não fica muito agradável, né?
+[11:18] Não tá correto que ainda tá em análise,
+[11:21] também não fica uma informação assim muito agradável,
+[11:24] talvez para o pessoal que for...
+[11:26] Não sei como é que vai ser feito isso
+[11:28] para a gente entregar para lançar as notas no final do período, né?
+[11:32] Se eles conseguem receber um CSV,
+[11:35] para eles fazerem essa importação desses valores.
+[11:39] Mas também tem uma opção...
+[11:41] Tem que ser lançado nota a nota.
+[11:43] Ah, vai ser, eles vão ter que notar nota a nota, né?
+[11:47] É, o orientador de gestão que fez isso,
+[11:49] lança nota a nota.
+[11:51] A Gloucela, no caso de vocês.
+[11:53] A professora Gloucela, no caso de vocês.
+[11:55] Tranquilo.
+[11:56] E, mas assim, tem essa opção do CSV
+[11:59] que a gente vai deixar disponível,
+[12:01] e também eu queria botar um Excel mesmo,
+[12:04] que ele divida as partes mais arrumadinho,
+[12:08] porque aí não fica uma coisa agradável.
+[12:10] Até que se você quiser puxar,
+[12:12] às vezes a pessoa quer ver um Excel mesmo,
+[12:14] fazer gráficos, outro tipo de formação,
+[12:17] outros tipos de insight,
+[12:19] e dessa forma aí não ficou legal, não.
+[12:26] Vamos para o próximo.
+[12:32] Essa história aqui nada mais é do que guardar todos os ciclos, né?
+[12:36] Aqui só tem o primeiro período.
+[12:39] Se você clicar aí, ele vai exatamente para o resultado.
+[12:42] Mas se tivesse vários períodos,
+[12:44] na hora que você clica naquele resultado do histórico,
+[12:47] ele abre o resultado daquele período.
+[12:50] Tá.
+[12:51] Tem como...
+[12:52] Lembrem que uma coisa importante é eu conseguir diferenciar
+[12:55] entre o semestre 1, a fase 1 de projeto, e a fase 2.
+[13:01] Eu tenho criperios diferentes, peso diferentes,
+[13:06] para quem está com esse projeto,
+[13:08] para quem está no semestre que vocês estão,
+[13:10] e para quem está fazendo o encerramento de semestre,
+[13:15] quem estaria no próximo semestre de vocês, por exemplo.
+[13:21] Sim, mas por exemplo,
+[13:22] todo mundo que está na fase 1 tem o mesmo critério?
+[13:25] Todo mundo que está na fase 1 tem o mesmo critério.
+[13:27] Por enquanto aí não tem problema não,
+[13:29] porque você vê que a gente tem a fase, né?
+[13:31] E em configuração, você lembra que tem aquela...
+[13:34] Ah, tem a fase ali.
+[13:36] Na parte de configuração...
+[13:37] Deixa eu ver se eu chego aqui.
+[13:40] Em configuração, lembra que a gente cadastra,
+[13:42] se mexe a fase e o peso?
+[13:45] Tá.
+[13:46] Na hora que fizer aqui é porque o nosso nesse exemplo só tem um.
+[13:49] Mas quando fizer o cadastro da fase 2,
+[13:52] ele vai imediatamente para lá.
+[13:55] Essa parte do coordenador acho que é a parte mais delicada,
+[13:58] porque nele ele concentra muita atividade.
+[14:01] E lá...
+[14:03] Oi?
+[14:04] E lá na hora de cadastrar o peso não tem a nota do cliente?
+[14:08] Deixa eu ver aqui a planilha que você fez.
+[14:10] Não tem, não.
+[14:12] Vou pôr.
+[14:13] Ah, tá aí.
+[14:14] Está gravando, sempre esqueço.
+[14:16] Vou pôr a nota do cliente.
+[14:19] Então falta cadastrar o cliente e botar a nota do cliente.
+[14:23] Isso.
+[14:29] E ter peso para o cliente.
+[14:31] Eu não vi peso também para o cliente.
+[14:32] Eu não me lembro daquela planilha de ter...
+[14:35] De ter visto o cliente.
+[14:36] Mas não tem problema não, professor.
+[14:37] Vou incluir a questão do cliente.
+[14:42] Tá.
+[14:43] Mas como ele não vai ter impacto de módulo,
+[14:45] ele só vai ser no gestor mesmo.
+[14:48] No coordenador aí para...
+[14:51] E seria o próprio coordenador que vai fazer um input da nota do cliente
+[14:55] ou é algum orientador?
+[14:56] Isso.
+[14:57] O próprio coordenador.
+[14:58] Na verdade é o orientador de gestão.
+[15:01] O orientador de gestão.
+[15:02] Então tem que ser na outra trilha.
+[15:04] Não aí mesmo.
+[15:05] Aí tem que ficar desse jeito, né?
+[15:07] Só aparecer a nota do cliente nessa tela.
+[15:11] E no do orientador tem que ser lançada.
+[15:14] Isso.
+[15:15] O orientador de gestão quem lança?
+[15:21] O orientador.
+[15:23] O orientador é um pouco mais simples, né?
+[15:29] Que vai ter essa parte aqui que é a equipe.
+[15:32] Que vai ter os pesos de documentação e tudo mais.
+[15:36] E vai ter a avaliação dos integrantes.
+[15:38] As avaliações dos integrantes dessa forma assim?
+[15:41] Ou com o novo?
+[15:42] Não, eu uso cinco níveis.
+[15:45] Certo.
+[15:49] Deixa eu ver aqui.
+[15:50] Esse aqui, né?
+[15:51] Não 10, 8, 6, 7, 5, 3.
+[15:55] Acho que foi aqui que eu já anotei esse ajuste aqui.
+[15:58] Isso.
+[15:59] E aí tem os nomes dos conceitos, né?
+[16:05] Que é muito ruim, ruim.
+[16:07] O intermediário eu não lembro, mas bom e muito bom.
+[16:13] Ah, certo.
+[16:14] Então ajuste aí eu vou incluir mais um.
+[16:16] E vou alterar esses nomes aí.
+[16:19] Isso não é complicado não.
+[16:22] Que bom.
+[16:23] Mas são cinco níveis de conceito.
+[16:26] A avaliação da equipe, aqui os pesos, equipe 1, equipe 1.
+[16:35] Depois eu entro aqui no módulo mesmo aqui.
+[16:38] O estudante, né?
+[16:41] Projeto vai de 0 a 10.
+[16:43] Ele vai ter a autoavaliação também assim.
+[16:46] O suficiente regular, bom, ótimo.
+[16:49] São cinco níveis também.
+[16:51] Os níveis são os mesmos.
+[16:52] Os mesmos cinco níveis de lá são os aqui, né?
+[16:54] Então alterando um, altero o outro também.
+[16:57] Deixa eu só verificar aqui exatamente o tempo que eu uso para o nível intermediário.
+[17:02] Para abrir aqui.
+[17:20] Muito ruim, ruim, razoável, bom e muito bom.
+[17:55] Perfeito.
+[17:58] Uma coisa que eu estava até analisando, que essas questões de nota de visualização
+[18:04] acho que teria que ser liberada a cada momento, né?
+[18:07] No período que eles poderiam fazer esse input da autoavaliação
+[18:11] e avaliação dos colegas, né?
+[18:13] E também liberar a minha nota só em determinado período.
+[18:17] Tipo, da coordenação, ter as datas que vai ter acesso à autoavaliação,
+[18:21] avaliação dos colegas e de minha nota, né?
+[18:25] Porque ele não pode, né?
+[18:27] E também a questão de autoavaliação dos colegas,
+[18:30] ele não pode ter acesso à avaliação dos colegas,
+[18:33] para não saber o colega que...
+[18:36] Isso é sempre no final do semestre.
+[18:38] E aí o que o integrante deve saber é a média que ele teve da nota dos colegas.
+[18:45] Isso.
+[18:48] Tem os nomes específicos que eu adoto para essas notas?
+[18:56] Eu preciso recuperar a planilha que eu enviei para ver
+[19:06] se esses nomes específicos estão lá, né?
+[19:09] Mas vamos lá, vamos avançar.
+[19:14] Carina.
+[19:15] Esse aqui seria a nota dele, que seria a nota da equipe,
+[19:18] mas o coeficiente dele daria a nota final.
+[19:23] Isso, exato.
+[19:28] Aqui só um resumo, né?
+[19:30] Média ponderada dos critérios.
+[19:34] Equipe 3, conceito do aluno dividido pelo conceito da equipe.
+[19:39] É o coeficiente.
+[19:45] Tá, o conceito é CIP? Não, é o CDI, tá?
+[19:50] Isso, CDI.
+[19:51] Isso, esse aqui em cima.
+[19:54] Certo?
+[19:56] Então, confidencialidade e clareza, né?
+[19:59] Esses aqui a gente já falou um pouquinho, né?
+[20:01] Nota só após a janela, vê e editar, exportar,
+[20:05] é a questão dos pesos, né?
+[20:08] Nomes claros, vira coeficiente de desempenho individual
+[20:12] e validar a escala.
+[20:15] Eu estou correndo um pouquinho, eu queria dar uma olhada,
+[20:17] mostrar rapidinho agora o sistema, né?
+[20:22] Tem como vocês ou me darem acesso ao sistema como está
+[20:36] ou vocês me enviarem essas telas
+[20:39] para eu poder só verificar a coerência dos termos que eu adoto,
+[20:43] ver se tem mais alguma coisa que eu ache importante?
+[20:45] Sim, claro.
+[20:51] O sistema não está aparecendo aqui.
+[20:54] Deixa eu fechar essa aqui.
+[21:00] Ele está rodando onde nesse momento?
+[21:02] Na sua máquina ou está...
+[21:04] Na minha máquina que ele irá aparecer aqui,
+[21:07] que eu botei para compartilhar e não...
+[21:10] Show de cancelar aqui e botar de novo.
+[21:13] Dá para ver aí?
+[22:02] Sim, estou vendo.
+[22:05] Certo, então essa aqui é a parte que faz a escolha o ficheiro,
+[22:12] ali abre a parte pessoal aqui para fazer a seleção
+[22:17] e aí faz a importação.
+[22:22] Essa parte aqui é parte das equipes
+[22:26] e, por enquanto, ele só está com a questão de editar
+[22:33] e fazer nova equipe.
+[22:36] Ah, tá, nova equipe.
+[22:38] Você pode só abrir a seleção dos integrantes, por favor,
+[22:43] só para ver como é?
+[22:45] Essa parte da seleção dos integrantes aqui?
+[22:51] Não, ali embaixo não teria como selecionar os integrantes.
+[22:56] Não, é isso que eu falei.
+[22:58] Por enquanto, se lembra que eu disse que tinha uma limitação
+[23:02] que aqui não estava dando para ver a seleção de integrantes,
+[23:06] percentual de preenchimento da nota, quem falta,
+[23:09] a gestão está faltando.
+[23:12] Só na parte de equipe mesmo você vai conseguir olhar.
+[23:16] Aqui é a parte de configuração.
+[23:18] Legal.
+[23:27] Aqui mesmo dá para alterar.
+[23:29] Ah, eu tenho como colocar escala de conceitos, legal.
+[23:33] Essa flexibilidade é muito boa.
+[23:35] Questão de novos ciclos.
+[23:38] Legal, Caim. Muito bom.
+[23:49] Aqui no resultado acho que abre.
+[23:51] Deixa eu ver se está abrindo.
+[23:53] Também não está abrindo.
+[23:55] Mas aí eu mostro lá no estudante.
+[23:58] Ele está vendo aqui só fechado.
+[24:06] Isso aqui precisa dar um maior detalhamento
+[24:08] nesse resultado aqui.
+[24:10] Se clicar aqui, pode abrir.
+[24:13] Certo.
+[24:14] E esse é o histórico.
+[24:15] Como só tem a fase 1, você só vê a fase 1.
+[24:20] Certo.
+[24:21] Certo.
+[24:24] Aqui eu vou sair e vou fazer o perfil do orientador.
+[24:30] Agora essa parte aqui da avaliação daqui,
+[24:39] esse peso aqui já vem do outro, não é?
+[24:42] Não sei se precisa.
+[24:43] Ah, não, isso aqui ele está avaliando mesmo.
+[24:46] Isso, ele está avaliando esses elementos.
+[24:48] É, os elementos estão certos.
+[24:50] Aqui eu tenho que fazer aquela alteração
+[24:52] das escalas.
+[24:55] Aqui tem exemplo de duas equipes.
+[25:02] E onde é que eu faço a diferenciação
+[25:04] entre orientador de execução técnica
+[25:06] e de gestão de projetos no cadastro deles?
+[25:11] É isso e a tela vai aparecer diferente?
+[25:14] Na realidade realmente se quiser
+[25:17] a gente pode botar questão aqui.
+[25:20] Porque na realidade a gente só viu
+[25:22] que foi feita o cadastro lá na coordenação.
+[25:26] Precisa melhorar realmente a evidenciação
+[25:29] de um e de outro.
+[25:31] É porque na realidade do orientador
+[25:33] a gente botou os dois juntos.
+[25:36] E são os mesmos critérios?
+[25:39] Porque no final das contas são olhares diferentes.
+[25:42] Eles avaliam aspectos diferentes.
+[25:44] Coisas diferentes.
+[25:45] Então talvez a gente tem que ver
+[25:46] como é que a gente pode trabalhar
+[25:47] esse orientador aí.
+[25:50] Dar um maior detalhamento.
+[25:52] Já que são perfis diferentes,
+[25:54] coisas diferentes.
+[25:55] Então aqui a gente precisa realmente dar
+[25:57] uma trabalhada melhor.
+[26:00] O coordenador avalia?
+[26:02] Como é que dá essa questão
+[26:03] do perfil do coordenador?
+[26:04] Ele avalia ou ele só cadastra?
+[26:06] Só cadastra.
+[26:09] E no caso vai ter a nota do cliente
+[26:11] que vai ser lançada.
+[26:13] Ah não, é o orientador
+[26:15] que lança o cliente.
+[26:17] Orientador de gestão.
+[26:18] Orientador de gestão.
+[26:19] Isso.
+[26:20] Vai ter que criar o orientador,
+[26:22] mas dentro de orientador
+[26:23] a gente vai ter que bifucar.
+[26:25] Entre dois tipos.
+[26:27] Vejam o que é mais fácil.
+[26:29] Se é criar o orientador de gestão de projeto
+[26:34] ou se é mais fácil colocar a avaliação
+[26:38] para o coordenador.
+[26:39] Porque assim, no final das contas,
+[26:41] quem faz essa gestão da equipe
+[26:44] no semestre e a gestão da avaliação
+[26:46] é o orientador de gestão.
+[26:48] Ele é o responsável por isso.
+[26:50] Ele que faz a alocação das equipes,
+[26:52] ele que faz essa gestão
+[26:54] e ele vai avaliar pelo olhar
+[26:56] de orientador de gestão.
+[26:58] Eu, enquanto coordenador,
+[27:00] eu faço isso.
+[27:01] Nós somos do presencial
+[27:02] porque eu acumulo os dois papéis
+[27:04] de coordenador de orientação de gestão.
+[27:06] Mas quem faz esse trabalho
+[27:10] que vocês me mostraram
+[27:12] de cadastrar o aluno,
+[27:13] de alocar os alunos na equipe
+[27:16] e de lançar a nota do cliente
+[27:19] é o orientador de gestão que faz isso.
+[27:21] Então pronto.
+[27:23] Então o coordenador fica mais com a questão
+[27:26] de ver acompanhamento de nota,
+[27:28] de lançamento.
+[27:30] Isso.
+[27:31] O que está faltando é uma cobrança,
+[27:35] uma gestão do processo como está a evolução.
+[27:39] Isso.
+[27:41] Perfeito.
+[27:42] Perfeito.
+[27:43] Complicado não.
+[27:45] Então esse aqui é do aluno.
+[27:47] É o projeto, a questão da autoavaliação.
+[27:51] A gente vai também mudar aqui.
+[27:53] A avaliação dos colegas
+[27:55] e a nota dele.
+[27:59] A avaliação dos colegas tem vários critérios.
+[28:02] São cinco critérios que ele avalia os colegas.
+[28:08] Aqueles mesmo cinco que foram...
+[28:12] Não, não é o conceito.
+[28:14] Não é o conceito.
+[28:15] São cinco perguntas.
+[28:17] Ah, certo.
+[28:18] São cinco perguntas.
+[28:19] Ele responde.
+[28:21] Perfeito.
+[28:23] Eu vou...
+[28:26] Eu não cheguei a passar essas perguntas para vocês?
+[28:33] Deixa eu dar uma olhadinha aqui.
+[28:35] Se eu tenho aqui o que...
+[28:37] Para de compartilhar aqui.
+[28:39] Tá bom.
+[28:40] Eu acho que o importante é que tanto as perguntas
+[29:20] que os orientadores respondem hoje no formulário
+[29:23] que eu utilizo para levantar nota dos orientadores
+[29:25] como dos alunos no formulário de avaliação 360
+[29:29] sejam as mesmas que estejam aí no sistema de vocês.
+[29:41] É, professor.
+[29:42] Não localizei aqui a planilha, não.
+[29:44] Porque o Flávio passou para mim, para a gente,
+[29:46] mas ficou...
+[29:48] Não estou localizando onde é.
+[29:50] Você consegue fácil, Bruno?
+[29:53] Não, né?
+[29:54] A gente troca tanta mensagem aqui.
+[29:57] Não estava que se perde, né?
+[30:00] Mas eu dou uma...
+[30:04] Acho que agora achei.
+[30:05] Deixa eu ver se é isso.
+[30:08] Eu passei para o professor Cardi.
+[30:10] Eu estou olhando aqui.
+[30:11] Eu passei em outubro para ele.
+[30:13] Deixa eu compartilhar aqui, professor,
+[30:21] para o negócio aqui.
+[30:24] Espera aí.
+[30:35] Foi errada, né?
+[30:46] Eu passei três formulários para ele.
+[30:52] Aqui não está...
+[30:54] As perguntas não estão, não.
+[30:56] Nessa planilha que foi para o Flávio.
+[30:59] Foi para o professor Cardi?
+[31:01] Isso.
+[31:02] O professor Cardi me procurou em outubro
+[31:06] me perguntando se eu poderia passar os formulários
+[31:13] que eu utilizo para poder fazer a coleta de nota.
+[31:16] Eu passei para ele.
+[31:18] Mas eu posso passar para vocês.
+[31:21] Tranquilo.
+[31:22] Posso até dar uma olhada também no grupo.
+[31:25] Como a gente troca muita coisa,
+[31:27] pode ser que perdeu essa informação.
+[31:30] Mas, tranquilo, vou reconsiderar aquelas questões
+[31:34] nas telas.
+[31:36] A questão das notas, dos cinco,
+[31:39] critério de jogar para o orientador de execução,
+[31:43] deixar o coordenador só como um acompanhamento
+[31:46] do fluxo de lançamento das notas, estágio,
+[31:50] o que está faltando,
+[31:52] fazer esses ajustes.
+[31:54] O que eu fiz?
+[31:55] Eu criei cópias dos formulários
+[31:58] e aí eu pedi o e-mail de vocês
+[32:01] para colocar vocês como editores,
+[32:03] para vocês poderem ver as perguntas
+[32:05] que poderem usar,
+[32:07] para não ser só na tela de respondente.
+[32:11] Vocês querem me mandar?
+[32:13] Vocês têm meu WhatsApp?
+[32:15] Flávio, com certeza, tem?
+[32:17] Não sei se todos vocês têm.
+[32:18] Flávio tem. A gente não tem, não.
+[32:20] Eu vou passar aqui no chat.
+[32:23] E aí, me mandem lá no WhatsApp
+[32:26] o e-mail de vocês,
+[32:28] o e-mail do Google, do Simatec.
+[32:32] E aí eu dou acesso a vocês nesses formulários,
+[32:35] porque lá vocês podem ver as perguntas
+[32:37] que eu faço para os professores,
+[32:40] para os orientadores de gestão
+[32:42] e orientadores de execução,
+[32:44] e também para os alunos,
+[32:45] para que eles possam avaliar
+[32:47] o projeto de seus colegas.
+[32:54] Tranquilo.
+[32:56] Professor Guilherme,
+[32:58] vou fazer as alterações,
+[33:00] já que eu vou ter que passar as telas,
+[33:02] que às vezes dá outros sites,
+[33:05] ver mais com calma,
+[33:07] e aí ver se é isso mesmo.
+[33:11] Legal, mas está ficando muito bom.
+[33:13] Gostei do que vi.
+[33:14] Estou aqui já empolgado
+[33:16] para poder ter essa ferramenta
+[33:18] para me ajudar.
+[33:19] Professor, não falei não
+[33:21] que eu era fazendo essa planilha
+[33:22] quando eu vi que não ia ficar próximo
+[33:24] no final do ano.
+[33:25] Eu só via começando,
+[33:26] em 2027.1, você pegando aquele
+[33:29] bando de coisas
+[33:31] para fazer lançar uma planilha.
+[33:33] Era fazer no sistema,
+[33:35] meu Deus, não vai fechar agora isso.
+[33:38] Não, mas não vai.
+[33:39] A expectativa não era nem que
+[33:40] fechasse agora.
+[33:41] Está certo, é isso aí.
+[33:42] Fiquem tranquilos,
+[33:46] vocês já estão me ajudando muito,
+[33:48] sem dúvida.
+[33:49] Vai ser uma baita ajuda.
+[33:52] Eu só não garanto o que eu faço agora,
+[33:59] porque eu vou entrar em aula,
+[34:00] mas eu faço...
+[34:02] Já está aqui separado,
+[34:04] já recebi a mensagem do Bruno.
+[34:06] Já estou mandando o formulário
+[34:13] para o Bruno, inclusive.
+[34:14] E aí, quando o Carina me enviar,
+[34:16] eu consulto também.
+[34:17] Mas aqui, esse é o formulário da equipe.
+[34:32] Aí a pessoa precisa identificar o projeto.
+[34:46] E aí vem...
+[34:50] Essas são as perguntas para avaliar o...
+[34:53] para o estudante avaliar o projeto.
+[34:55] Então, percebam que são
+[34:56] uma, duas, três, quatro...
+[34:59] Quatro perguntas.
+[35:02] E aí eu deixo um campo para comentários.
+[35:19] Mas os comentários eu posso
+[35:21] Travou para mim?
+[35:22] Para você?
+[35:33] Travou.
+[35:35] Acho que ele caiu.
+[35:38] Ô, Carina, manda para mim o seu e-mail,
+[35:41] seu endereço de e-mail,
+[35:42] que eu vou passar para ele.
+[35:44] É fácil aí?
+[35:45] Tá, sim.
+[35:47] Passei lá no nosso.
+[36:09] Beleza, vou mandar para ele agora.
+[36:18] Achei o de Flávio aqui.
+[36:19] Mandei.
+[36:20] Mandei o seu ou o de Flávio?
+[36:21] Opa, porra!
+[36:22] Cheguei no final?
+[36:23] Vocês estão despedindo?
+[36:26] Eu chegando?
+[36:27] Vou embora?
+[36:28] Não, estou brincando.
+[36:30] Consegui pegar o final.
+[36:31] Caiu ele.
+[36:33] Ele caiu?
+[36:34] O professor caiu.
+[36:35] Ah, tá.
+[36:36] Mas já terminou, já foi bem no finalzinho.
+[36:38] Ele vai dar aula agora, esse 20.
+[36:39] Mas aí, é o caminho ou não é?
+[36:42] É o caminho, mas só que teve alguns ajustes.
+[36:46] A questão do coordenador,
+[36:49] a gente achava que ele fazia essa questão
+[36:51] de importar as notas, de fazer as equipes,
+[36:54] mas é o orientador de execução.
+[36:58] Tem perfis de orientadores diferentes.
+[37:02] Isso, isso.
+[37:03] Eu também estou aqui dizendo que a conexão caiu
+[37:07] e está tentando voltar.
+[37:09] Ótimo.
+[37:10] Mas que bom que esse é o caminho,
+[37:12] só ajustar isso.
+[37:15] Você chegar a apresentar as telas?
+[37:18] Chegamos.
+[37:19] Deixa eu ver rapidamente?
+[37:21] Consegue mostrar para mim?
+[37:22] Deixa eu ver.
+[37:23] Eu não vi esse slide que vocês mostraram.
+[37:24] Eu não vi que você apresentou um slide.
+[37:26] Fiquei louco para ver esse slidezinho.
+[37:29] Nem preciso explicar não.
+[37:30] Só quero ver como é que ficou.
+[37:33] Rapidinho.
+[37:34] Para eu dormir em paz.
+[37:37] Aí, chegou.
+[37:38] E aí, professor Guilherme?
+[37:40] Estou aqui voltar.
+[37:41] A internet aqui do hotel.
+[37:43] Deu uma oscilada.
+[37:46] Está em viagem?
+[37:48] Eu estou na França, cara.
+[37:50] Nem a noji para mim.
+[37:51] Caralho de Deus.
+[37:53] Ah, meu Deus.
+[37:54] Bonjour, bonjour.
+[37:56] Como é que é boa noite?
+[37:57] Bonsoir.
+[37:58] Bonsoir.
+[37:59] Bonsoir, bonsoir, bonsoir.
+[38:00] Bonsoir.
+[38:01] Que legal, cara.
+[38:02] E vai dar aula até uma da manhã?
+[38:04] Vou dar aula até duas.
+[38:07] Até duas.
+[38:08] Eita.
+[38:09] Que tenso.
+[38:10] Vai sair.
+[38:11] Vamos lá.
+[38:13] Professor Guilherme,
+[38:14] eu não sei se você viu a mensagem.
+[38:15] Eu estava dando aula,
+[38:16] mas eu fiz questão de manter essa reunião aqui
+[38:19] para dar mais que você de casa
+[38:21] para pegar esse feedback
+[38:23] e os alunos conversarem com você
+[38:25] e a gente tocar aqui alguns ajustes a tempo
+[38:27] até da apresentação final.
+[38:29] Sei que está corrido para todo mundo,
+[38:30] por isso que eu fiz questão de manter aqui, tá?
+[38:33] Essa reunião.
+[38:34] Obrigado.
+[38:35] É super importante
+[38:36] e felizmente cheio de disponibilidade.
+[38:37] Então foi ótimo ver o avanço.
+[38:40] Está ficando muito legal.
+[38:41] Já fico até com boas expectativas
+[38:44] de poder usar em breve o sistema
+[38:47] para poder me ajudar com essa carga
+[38:49] que é o trabalho da avaliação
+[38:51] e do capo de notas.
+[38:53] Então parabéns a equipe para a evolução.
+[38:56] E vamos nos falando
+[38:57] porque tem alguns ajustes a serem feitos,
+[38:59] o que é normal.
+[39:01] Mas a gente vai dialogando.
+[39:03] Perfeito.
+[39:04] Tudo bom, professor Guilherme.
+[39:05] Obrigado pela participação.
+[39:07] Obrigado.
+[39:08] Professor Leonardo,
+[39:09] quando der isso,
+[39:10] compartilhe essa gravação aí para a gente.
+[39:12] Não, pode deixar.
+[39:13] Vou compartilhar assim.
+[39:14] Até para Flávio dar uma olhada também.
+[39:15] Isso.
+[39:16] Assim que terminar aqui,
+[39:17] eu já compartilho no grupo.
+[39:18] Está certo?
+[39:19] Está bom.
+[39:20] Beleza.
+[39:21] Obrigado a vocês.
+[39:22] Obrigado pela apresentação, Karina.
+[39:23] Obrigado, Bruno, também.
+[39:24] Obrigado, Leo.
+[39:25] Até mais, abraço.
+[39:26] Até.
+[39:27] Tchau, tchau.
+[39:28] Tchau.
+[39:29] Boa noite.
+[39:30] Boa noite.
+[39:31] Tchau, tchau.
+[39:32] O Bruno mostrando aí essas habilidades.

@@ -1,0 +1,9 @@
+node_modules
+.next
+.dados
+.env
+next-env.d.ts
+*.tsbuildinfo
+
+# gravações de reunião (pesadas demais para o git)
+*.mp4
