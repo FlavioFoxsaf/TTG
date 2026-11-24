@@ -17,7 +17,7 @@ export const NOME_PERFIL: Record<Perfil, string> = {
 export const INICIO: Record<Perfil, string> = {
   coordenacao: '/painel/acompanhamento',
   gestao: '/painel/acompanhamento',
-  execucao: '/orientador',
+  execucao: '/painel/avaliar',
   estudante: '/estudante',
 };
 export type Sessao = { id: number; nome: string; perfil: Perfil };

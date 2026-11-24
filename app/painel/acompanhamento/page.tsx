@@ -1,18 +1,20 @@
 import Link from 'next/link';
 import { exigirPerfil } from '@/lib/auth';
-import { acompanhamento, buscarCiclo, cicloAtivo, dataBR, nomeCiclo, type Ciclo, type Pendencia } from '@/lib/dados';
+import { acompanhamento, buscarCiclo, cicloAtivo, dataBR, equipesVisiveis, nomeCiclo, type Ciclo, type Pendencia } from '@/lib/dados';
 import { Aviso } from '@/components/Aviso';
 
 type Busca = { ciclo?: string; equipe?: string; ok?: string; erro?: string };
 
 // Acompanhamento do processo (reunião de 19/11): quanto já foi preenchido, quem falta e prazos críticos
 export default async function Acompanhamento({ searchParams }: { searchParams: Promise<Busca> }) {
-  await exigirPerfil('gestao', 'coordenacao');
+  const s = await exigirPerfil('gestao', 'coordenacao');
   const busca = await searchParams;
   const ciclo = busca.ciclo ? await buscarCiclo(Number(busca.ciclo)) : await cicloAtivo();
   if (!ciclo) return <div className="cartao">Nenhum ciclo avaliativo encontrado.</div>;
 
-  const linhas = await acompanhamento(ciclo);
+  // coordenação: todas as equipes; orientador de gestão: só as suas
+  const visivel = new Set((await equipesVisiveis(s, ciclo.id)).map((e) => e.id));
+  const linhas = (await acompanhamento(ciclo)).filter((l) => visivel.has(l.equipe_id));
   const pct = (l: Pick<Pendencia, 'esperado' | 'feito'>[]) => {
     const esperado = l.reduce((s, x) => s + x.esperado, 0);
     return esperado ? Math.round((100 * l.reduce((s, x) => s + x.feito, 0)) / esperado) : 0;

@@ -5,12 +5,12 @@ import { AreaOrientador } from '@/components/AreaOrientador';
 
 type Busca = { equipe?: string; ok?: string; erro?: string };
 
-// O orientador de gestão avalia suas equipes pelo olhar de gestão e lança a nota do cliente
+// Os orientadores avaliam suas equipes (gestão também lança a nota do cliente)
 export default async function Avaliar({ searchParams }: { searchParams: Promise<Busca> }) {
-  const s = await exigirPerfil('gestao');
+  const s = await exigirPerfil('gestao', 'execucao');
   const busca = await searchParams;
   const ciclo = await cicloAtivo();
-  if (!ciclo) return <div className="cartao">Crie um ciclo avaliativo na aba Configuração.</div>;
+  if (!ciclo) return <div className="cartao">Não há ciclo avaliativo ativo.</div>;
 
   return (
     <>

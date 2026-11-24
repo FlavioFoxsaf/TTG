@@ -238,6 +238,7 @@ export type ResultadoLinha = {
   cdi: number;
   nota_final: number;
   memoria: Memoria;
+  calculado_em?: string;
 };
 
 export const listarResultados = (cicloId: number) =>
@@ -322,4 +323,38 @@ export async function acompanhamento(c: Ciclo): Promise<Pendencia[]> {
     for (const m of integrantes) add(m, 'Estudante', est.equipe.length + est.individual.length * n);
   }
   return linhas;
+}
+
+// Quem vê quais equipes nos resultados e no acompanhamento (reunião de 24/11):
+// a coordenação vê 100% das equipes; cada orientador (gestão ou execução), só as que orienta.
+export async function equipesVisiveis(s: Sessao, cicloId: number): Promise<Equipe[]> {
+  if (s.perfil === 'coordenacao') return listarEquipes(cicloId);
+  if (s.perfil === 'gestao')
+    return query<Equipe>('select * from equipe where ciclo_id = $1 and orient_gestao_id = $2 order by nome', [cicloId, s.id]);
+  if (s.perfil === 'execucao')
+    return query<Equipe>('select * from equipe where ciclo_id = $1 and orient_execucao_id = $2 order by nome', [cicloId, s.id]);
+  return [];
+}
+
+// Integrantes de todas as equipes do ciclo, com os dados de identificação
+export const integrantesDoCiclo = (cicloId: number) =>
+  query<{ equipe_id: number; id: number; nome: string; matricula: string | null; curso: string | null }>(
+    `select m.equipe_id, u.id, u.nome, u.matricula, u.curso from membro m join usuario u on u.id = m.estudante_id
+     where m.ciclo_id = $1 order by u.nome`,
+    [cicloId],
+  );
+
+// Prévia: roda o motor com as avaliações atuais, sem gravar (para ver as notas antes de "Calcular notas")
+export async function previaResultados(c: Ciclo): Promise<ResultadoLinha[]> {
+  const [calculo, integrantes, equipes] = await Promise.all([calcularCiclo(c), integrantesDoCiclo(c.id), listarEquipes(c.id)]);
+  return calculo.map((r) => {
+    const u = integrantes.find((i) => i.id === r.estudante_id);
+    return {
+      ...r,
+      estudante: u?.nome ?? '—',
+      matricula: u?.matricula ?? null,
+      curso: u?.curso ?? null,
+      equipe: equipes.find((e) => e.id === r.equipe_id)?.nome ?? '—',
+    };
+  });
 }

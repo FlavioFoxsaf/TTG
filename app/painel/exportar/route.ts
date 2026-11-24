@@ -2,7 +2,9 @@ import ExcelJS from 'exceljs';
 import { auditar, query } from '@/lib/db';
 import { lerSessao } from '@/lib/auth';
 import { NOME_PAPEL, type Papel } from '@/lib/calculo';
-import { buscarCiclo, comentariosDoCiclo, listarEquipes, listarResultados, nomeCiclo, relatorioAvaliacoes } from '@/lib/dados';
+import {
+  buscarCiclo, comAviso, comentariosDoCiclo, equipesVisiveis, listarResultados, nomeCiclo, relatorioAvaliacoes,
+} from '@/lib/dados';
 
 const duas = (n: number | null) => (n == null ? null : Math.round(n * 100) / 100);
 
@@ -32,15 +34,25 @@ export async function GET(req: Request) {
   if (!s || (s.perfil !== 'gestao' && s.perfil !== 'coordenacao')) return new Response('Acesso negado', { status: 403 });
 
   const ciclo = await buscarCiclo(Number(new URL(req.url).searchParams.get('ciclo')));
-  const resultados = ciclo ? await listarResultados(ciclo.id) : [];
-  if (!ciclo || !resultados.length) return new Response('Calcule as notas do ciclo antes de exportar.', { status: 400 });
+  if (!ciclo) return new Response('Ciclo não encontrado.', { status: 404 });
 
-  const [equipes, avaliacoes, orientadores, comentarios] = await Promise.all([
-    listarEquipes(ciclo.id),
+  // Só as equipes que o perfil pode ver (coordenação: todas; orientador de gestão: as suas)
+  const equipes = await equipesVisiveis(s, ciclo.id);
+  const visivel = new Set(equipes.map((e) => e.id));
+  const resultados = (await listarResultados(ciclo.id)).filter((r) => visivel.has(r.equipe_id));
+  if (!resultados.length) {
+    // Volta para a tela com um aviso, em vez de abrir uma página só com texto
+    const destino = comAviso(`/painel/resultados?ciclo=${ciclo.id}`, 'erro', 'Para exportar, clique antes em “Calcular notas” para gravar as notas do ciclo.');
+    return Response.redirect(new URL(destino, req.url), 303);
+  }
+
+  const [avaliacoesTodas, orientadores, comentariosTodos] = await Promise.all([
     relatorioAvaliacoes(ciclo.id),
     query<{ id: number; nome: string }>(`select id, nome from usuario where perfil in ('gestao', 'execucao')`),
     comentariosDoCiclo(ciclo.id),
   ]);
+  const avaliacoes = avaliacoesTodas.filter((a) => visivel.has(a.equipe_id));
+  const comentarios = comentariosTodos.filter((c) => visivel.has(c.equipe_id));
   const nomeDe = (id: number | null) => orientadores.find((o) => o.id === id)?.nome ?? '';
 
   const planilha = new ExcelJS.Workbook();
