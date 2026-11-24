@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 import { auditar, query, transacao } from '@/lib/db';
 import { criarSessao, encerrarSessao, exigirPerfil, type Sessao } from '@/lib/auth';
 import {
-  cicloAtivo, comAviso, equipesDoUsuario, janelaAberta, listarCriterios, listarEscala, membrosDaEquipe, papelPermitido, usaEscala,
+  cicloAtivo, comAviso, equipesDoUsuario, janelaAberta, listarCriterios, listarEscala, membrosDaEquipe, papelPermitido, TIPO_COMENTARIO, usaEscala,
 } from '@/lib/dados';
 
 // RF03: login; o perfil vem do cadastro do usuário
@@ -57,7 +57,19 @@ export async function salvarAvaliacoes(form: FormData) {
     registros.push([ciclo.id, equipe.id, s.id, papel, avaliadoId, criterio!.id, valor]);
   }
 
-  const comentario = form.has('comentario') ? String(form.get('comentario')).trim() : null;
+  // Comentários (só do estudante): campos "c|<tipo>", cada um na janela da sua etapa
+  const comentarios: [string, string][] = [];
+  for (const [campo, bruto] of form.entries()) {
+    if (!campo.startsWith('c|')) continue;
+    const tipo = campo.slice(2);
+    const criterioCruzada = tipo.startsWith('colegas:') ? criterios.get(Number(tipo.slice(8))) : null;
+    const valido =
+      s.perfil === 'estudante' && TIPO_COMENTARIO.test(tipo) && (!tipo.startsWith('colegas:') || criterioCruzada?.tipo === 'individual');
+    if (!valido) redirect(comAviso(volta, 'erro', 'Comentário inválido.'));
+    if (!janelaAberta(ciclo, tipo === 'projeto' || tipo === 'auto' ? 'auto' : 'colega'))
+      redirect(comAviso(volta, 'erro', 'Esta avaliação não está liberada no momento.'));
+    comentarios.push([tipo, String(bruto).trim().slice(0, 5000)]);
+  }
 
   await transacao(async (q) => {
     for (const r of registros) {
@@ -69,14 +81,16 @@ export async function salvarAvaliacoes(form: FormData) {
         r,
       );
     }
-    if (comentario) {
-      await q(
-        `insert into comentario (ciclo_id, equipe_id, avaliador_id, texto) values ($1, $2, $3, $4)
-         on conflict (equipe_id, avaliador_id) do update set texto = excluded.texto, atualizado_em = now()`,
-        [ciclo.id, equipe.id, s.id, comentario],
-      );
-    } else if (comentario === '') {
-      await q('delete from comentario where equipe_id = $1 and avaliador_id = $2', [equipe.id, s.id]);
+    for (const [tipo, texto] of comentarios) {
+      if (texto) {
+        await q(
+          `insert into comentario (ciclo_id, equipe_id, avaliador_id, tipo, texto) values ($1, $2, $3, $4, $5)
+           on conflict (equipe_id, avaliador_id, tipo) do update set texto = excluded.texto, atualizado_em = now()`,
+          [ciclo.id, equipe.id, s.id, tipo, texto],
+        );
+      } else {
+        await q('delete from comentario where equipe_id = $1 and avaliador_id = $2 and tipo = $3', [equipe.id, s.id, tipo]);
+      }
     }
   });
   await auditar(s.id, 'avaliacao', `${registros.length} valores na equipe ${equipe.nome}`);

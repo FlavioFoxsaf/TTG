@@ -28,7 +28,18 @@ export type Ciclo = {
   nota_liberada: boolean;
 };
 
-export type Criterio = { id: number; tipo: 'equipe' | 'individual'; nome: string; peso: number; fonte: string | null; ordem: number };
+export type Criterio = {
+  id: number;
+  tipo: 'equipe' | 'individual';
+  nome: string; // título curto (aparece em relatórios e na planilha)
+  descricao: string | null; // texto completo da pergunta
+  descricao_auto: string | null; // versão em primeira pessoa, para a autoavaliação
+  ancora_min: string | null; // frase da ponta mais baixa da escala (projeto e autoavaliação)
+  ancora_max: string | null; // frase da ponta mais alta
+  peso: number;
+  fonte: string | null;
+  ordem: number;
+};
 export type Equipe = {
   id: number;
   nome: string;
@@ -88,8 +99,8 @@ export const membrosDaEquipe = (equipeId: number) =>
   );
 
 export const usuariosPorPerfil = (perfil: string) =>
-  query<{ id: number; nome: string; email: string; matricula: string | null }>(
-    'select id, nome, email, matricula from usuario where perfil = $1 order by nome',
+  query<{ id: number; nome: string; email: string; matricula: string | null; curso: string | null }>(
+    'select id, nome, email, matricula, curso from usuario where perfil = $1 order by nome',
     [perfil],
   );
 
@@ -219,6 +230,7 @@ export type ResultadoLinha = {
   estudante_id: number;
   estudante: string;
   matricula: string | null;
+  curso: string | null;
   equipe_id: number;
   equipe: string;
   nota_equipe: number;
@@ -230,28 +242,42 @@ export type ResultadoLinha = {
 
 export const listarResultados = (cicloId: number) =>
   query<ResultadoLinha>(
-    `select r.*, u.nome as estudante, u.matricula, e.nome as equipe
+    `select r.*, u.nome as estudante, u.matricula, u.curso, e.nome as equipe
      from resultado r join usuario u on u.id = r.estudante_id join equipe e on e.id = r.equipe_id
      where r.ciclo_id = $1 order by e.nome, u.nome`,
     [cicloId],
   );
 
-// Comentários sobre o trabalho em equipe
-export async function comentarioDoAvaliador(avaliadorId: number, equipeId: number) {
-  const [c] = await query<{ texto: string }>('select texto from comentario where avaliador_id = $1 and equipe_id = $2', [
-    avaliadorId,
-    equipeId,
-  ]);
-  return c?.texto ?? '';
+// Comentários livres (formulário 360º): projeto | auto | geral | colegas:<criterio_id>
+export const TIPO_COMENTARIO = /^(projeto|auto|geral|colegas:\d+)$/;
+
+export async function comentariosDoAvaliador(avaliadorId: number, equipeId: number) {
+  const linhas = await query<{ tipo: string; texto: string }>(
+    'select tipo, texto from comentario where avaliador_id = $1 and equipe_id = $2',
+    [avaliadorId, equipeId],
+  );
+  return new Map(linhas.map((l) => [l.tipo, l.texto]));
 }
 
 // Sem o nome do autor: a avaliação é confidencial
-export const comentariosDoCiclo = (cicloId: number) =>
-  query<{ equipe_id: number; equipe: string; texto: string }>(
-    `select c.equipe_id, e.nome as equipe, c.texto from comentario c join equipe e on e.id = c.equipe_id
-     where c.ciclo_id = $1 order by e.nome, c.atualizado_em`,
-    [cicloId],
-  );
+export async function comentariosDoCiclo(cicloId: number) {
+  const [linhas, criterios] = await Promise.all([
+    query<{ equipe_id: number; equipe: string; tipo: string; texto: string }>(
+      `select c.equipe_id, e.nome as equipe, c.tipo, c.texto from comentario c join equipe e on e.id = c.equipe_id
+       where c.ciclo_id = $1 order by e.nome, c.tipo, c.atualizado_em`,
+      [cicloId],
+    ),
+    listarCriterios(cicloId),
+  ]);
+  const rotulo = (tipo: string) => {
+    if (tipo === 'projeto') return 'Trabalho em equipe';
+    if (tipo === 'auto') return 'Autoavaliação';
+    if (tipo === 'geral') return 'Comentários gerais (projeto, metodologia, orientação, trilha, cliente)';
+    const c = criterios.find((x) => `colegas:${x.id}` === tipo);
+    return `Avaliação cruzada — ${c?.nome ?? 'questão removida'}`;
+  };
+  return linhas.map((l) => ({ ...l, rotulo: rotulo(l.tipo) }));
+}
 
 // Acompanhamento do preenchimento: o que cada avaliador deveria ter respondido x o que respondeu
 export type Pendencia = {

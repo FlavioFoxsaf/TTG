@@ -28,7 +28,7 @@ Usuários de exemplo:
 | Orientador de execução técnica | execucao1@cimatec.br | E001 | Avalia equipe e integrantes pelo olhar técnico |
 | Estudante | estudante.k@cimatec.br | 2026110 | Avalia o projeto, a si mesmo e os colegas; vê a própria nota quando liberada |
 
-Usuários importados entram com a **matrícula como senha**.
+Usuários importados entram com a **matrícula como senha**. O CSV aceita também a coluna opcional `curso`.
 
 ## Estrutura
 
@@ -86,9 +86,10 @@ O commit "Estado do sistema antes dos ajustes da reunião de 19/11" é a versão
 
 ## Pendências a validar com a coordenação
 
-- Perguntas reais dos formulários do professor (avaliação dos colegas, restante da autoavaliação e critérios de
-  cada orientador). As 4 perguntas do projeto e as 2 primeiras da autoavaliação já seguem o formulário 360º;
-  as demais do seed são provisórias. Tudo é editável em **Configuração**.
+- Formulários dos orientadores (gestão e execução): os critérios deles no seed ainda são provisórios.
+  As perguntas do estudante já são as do formulário "[PADRÃO] AOP-TTG FI Avaliação 360º - Equipe"
+  (4 do projeto, 5 da autoavaliação e 5 da avaliação cruzada, com comentários por questão e comentários gerais).
+  Tudo é editável em **Configuração** (título, texto completo, versão em primeira pessoa e frases das pontas da escala).
 - Pesos reais (componentes, nota do cliente, quatro fontes) e valores numéricos da escala.
 - Regra para avaliação ausente e para arredondamento: conferir contra a planilha histórica (RNF02)
   adicionando casos reais em `tests/calculo.test.ts`.

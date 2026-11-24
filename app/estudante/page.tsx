@@ -2,7 +2,7 @@ import { exigirPerfil } from '@/lib/auth';
 import { query } from '@/lib/db';
 import { NOME_FONTE, type Memoria } from '@/lib/calculo';
 import {
-  cicloAtivo, comentarioDoAvaliador, criteriosDoAvaliador, dataBR, equipesDoUsuario, listarCriterios, listarEscala,
+  cicloAtivo, comentariosDoAvaliador, criteriosDoAvaliador, dataBR, equipesDoUsuario, listarCriterios, listarEscala,
   membrosDaEquipe, num, periodoBR, valoresDoAvaliador, type Ciclo,
 } from '@/lib/dados';
 import { Abas } from '@/components/Abas';
@@ -15,7 +15,7 @@ type Busca = { aba?: string; ok?: string; erro?: string };
 const ABAS = [
   { href: '/estudante?aba=projeto', rotulo: '1. Projeto' },
   { href: '/estudante?aba=auto', rotulo: '2. Autoavaliação' },
-  { href: '/estudante?aba=colegas', rotulo: '3. Avaliação dos colegas' },
+  { href: '/estudante?aba=colegas', rotulo: '3. Avaliação cruzada (colegas)' },
   { href: '/estudante?aba=nota', rotulo: 'Minha nota' },
 ];
 
@@ -60,58 +60,70 @@ function Periodos({ c }: { c: Ciclo }) {
   return (
     <div className="resumo">
       {item('Projeto e autoavaliação', c.auto_aberta, periodoBR(c.auto_inicio, c.auto_fim))}
-      {item('Avaliação dos colegas', c.colegas_aberta, periodoBR(c.colegas_inicio, c.colegas_fim))}
+      {item('Avaliação cruzada (colegas)', c.colegas_aberta, periodoBR(c.colegas_inicio, c.colegas_fim))}
       {item('Minha nota', c.nota_liberada, c.nota_liberada_em ? `a partir de ${dataBR(c.nota_liberada_em)}` : 'ainda não liberada')}
     </div>
   );
 }
 
 async function Avaliacao(p: { aba: string; estudanteId: number; ciclo: Ciclo; equipeId: number }) {
-  const [criterios, escala, membros, valores, comentario] = await Promise.all([
+  const [criterios, escala, membros, valores, comentarios] = await Promise.all([
     listarCriterios(p.ciclo.id),
     listarEscala(p.ciclo.id),
     membrosDaEquipe(p.equipeId),
     valoresDoAvaliador(p.estudanteId, p.equipeId),
-    comentarioDoAvaliador(p.estudanteId, p.equipeId),
+    comentariosDoAvaliador(p.estudanteId, p.equipeId),
   ]);
   const meus = criteriosDoAvaliador(criterios, 'estudante');
   const fechado = (periodo: string) => `Esta etapa não está liberada (${periodo}).`;
   const comum = { equipeId: p.equipeId, volta: `/estudante?aba=${p.aba}`, escala, valores };
   const periodoAuto = periodoBR(p.ciclo.auto_inicio, p.ciclo.auto_fim);
+  const campo = (tipo: string, rotulo: string) => ({ tipo, rotulo, valor: comentarios.get(tipo) ?? '' });
+  const SUFIXO = '(reflexões, críticas, elogios, sugestões) — opcional';
 
   if (p.aba === 'auto')
     return (
       <>
-        <h2>Autoavaliação</h2>
-        <p className="suave">Avalie o seu papel e a sua contribuição ao trabalho e à produção da equipe.</p>
+        <h2>Autoavaliação (individual)</h2>
+        <p className="suave">Nesta seção você deve se avaliar, o seu papel e sua contribuição ao trabalho e à produção da equipe.</p>
         <FormAvaliacao
-          {...comum} criterios={meus.individual} alvos={membros.filter((m) => m.id === p.estudanteId)}
+          {...comum} primeiraPessoa criterios={meus.individual} alvos={membros.filter((m) => m.id === p.estudanteId)}
           bloqueado={!p.ciclo.auto_aberta} mensagemBloqueio={fechado(periodoAuto)}
+          comentarios={[campo('auto', `Comentários sobre sua autoavaliação ${SUFIXO}`)]}
         />
       </>
     );
   if (p.aba === 'colegas')
     return (
       <>
-        <h2>Avaliação dos colegas</h2>
-        <p className="suave">Confidencial: cada colega vê apenas a média das notas que recebeu.</p>
+        <h2>Avaliação cruzada</h2>
+        <p className="suave">
+          Nesta seção você deve avaliar cada um de seus colegas de equipe, tanto o papel dos colegas quanto as suas
+          contribuições ao trabalho e à produção da equipe. São {meus.individual.length} questões. Você só vê os
+          colegas da sua equipe; cada colega vê apenas a média das notas que recebeu.
+        </p>
         <FormAvaliacao
           {...comum} criterios={meus.individual} alvos={membros.filter((m) => m.id !== p.estudanteId)}
           bloqueado={!p.ciclo.colegas_aberta} mensagemBloqueio={fechado(periodoBR(p.ciclo.colegas_inicio, p.ciclo.colegas_fim))}
+          comentarioPorCriterio={(c) => campo(`colegas:${c.id}`, `Comentários sobre esta questão, a respeito dos seus colegas ${SUFIXO}`)}
+          comentarios={[
+            campo(
+              'geral',
+              'Comentários gerais: o projeto PPS, a metodologia de projeto, os processos de orientação (execução técnica e gestão), ' +
+                `a Trilha Técnico-Gestor, a relação com o cliente ou o que mais quiser tratar ${SUFIXO}`,
+            ),
+          ]}
         />
       </>
     );
   return (
     <>
       <h2>Avaliação geral do trabalho em equipe</h2>
-      <p className="suave">Avalie o trabalho da sua equipe enquanto grupo (1 = muito baixo, 5 = muito alto).</p>
+      <p className="suave">Nesta seção você deve avaliar o trabalho de sua equipe enquanto grupo (1 = muito baixo, 5 = muito alto).</p>
       <FormAvaliacao
         {...comum} alvos={[]} criterios={meus.equipe}
         bloqueado={!p.ciclo.auto_aberta} mensagemBloqueio={fechado(periodoAuto)}
-        comentario={{
-          valor: comentario,
-          rotulo: 'Comentários sobre o trabalho em equipe (reflexões, críticas, elogios, sugestões) — opcional',
-        }}
+        comentarios={[campo('projeto', `Comentários sobre o trabalho em equipe ${SUFIXO}`)]}
       />
     </>
   );

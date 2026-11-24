@@ -1,14 +1,21 @@
 // Dados fictícios para demonstração (npm run seed).
-// Critérios, pesos e valores da escala são EXEMPLOS: as perguntas reais virão dos formulários do professor.
-// As quatro perguntas do estudante sobre o projeto e as duas primeiras da autoavaliação seguem o
-// formulário "Avaliação 360º - Equipe" mostrado na reunião de 19/11.
+// As perguntas do estudante (projeto, autoavaliação e avaliação cruzada) são as do formulário
+// "[PADRÃO] AOP-TTG FI Avaliação 360º - Equipe" do professor (recebido em 24/11).
+// Critérios dos orientadores, pesos e valores numéricos da escala ainda são EXEMPLOS.
 import bcrypt from 'bcryptjs';
 import { fechar, query } from '../lib/db';
 
-async function inserirUsuario(nome: string, email: string, matricula: string, perfil: string, senha = matricula) {
+// Cursos do formulário do professor
+const CURSOS = [
+  'Arquitetura e Urbanismo', 'Engenharia Automotiva', 'Engenharia Civil', 'Engenharia de Computação',
+  'Engenharia de Controle e Automação', 'Engenharia de Materiais', 'Engenharia de Produção', 'Engenharia Elétrica',
+  'Engenharia Mecânica', 'Engenharia Química',
+];
+
+async function inserirUsuario(nome: string, email: string, matricula: string, perfil: string, senha = matricula, curso: string | null = null) {
   const [u] = await query<{ id: number }>(
-    'insert into usuario (nome, email, matricula, perfil, senha_hash) values ($1, $2, $3, $4, $5) returning id',
-    [nome, email, matricula, perfil, await bcrypt.hash(senha, 10)],
+    'insert into usuario (nome, email, matricula, perfil, curso, senha_hash) values ($1, $2, $3, $4, $5, $6) returning id',
+    [nome, email, matricula, perfil, curso, await bcrypt.hash(senha, 10)],
   );
   return u.id;
 }
@@ -30,7 +37,8 @@ async function main() {
   const estudantes: number[] = [];
   for (let i = 0; i < 19; i++) {
     const letra = String.fromCharCode(65 + i);
-    estudantes.push(await inserirUsuario(`Estudante ${letra}`, `estudante.${letra.toLowerCase()}@cimatec.br`, `2026${100 + i}`, 'estudante'));
+    const matricula = `2026${100 + i}`;
+    estudantes.push(await inserirUsuario(`Estudante ${letra}`, `estudante.${letra.toLowerCase()}@cimatec.br`, matricula, 'estudante', matricula, CURSOS[(i * 3) % CURSOS.length]));
   }
 
   // Períodos: orientadores abertos; estudante com projeto/autoavaliação abertos e colegas terminando em breve;
@@ -43,41 +51,79 @@ async function main() {
        '2026-11-15', '2026-11-30', '2026-11-18', '2026-11-24', '2026-12-08') returning id`,
   );
 
-  // Componentes da nota da equipe (somam 100)
-  const componentes: [string, number, string][] = [
+  // [título curto, peso, quem avalia, texto da pergunta, texto em primeira pessoa (autoavaliação)]
+  type Def = [string, number, string, string?, string?];
+
+  // Componentes da nota da equipe (somam 100). Os dos orientadores e os pesos ainda são exemplos.
+  const componentes: Def[] = [
     ['Planejamento do projeto', 10, 'orientador'],
     ['Gestão do cronograma', 10, 'orientador'],
     ['Qualidade técnica da entrega', 15, 'orientador'],
     ['Documentação', 10, 'orientador'],
     ['Apresentação', 15, 'orientador'],
-    ['Satisfação global com o projeto desenvolvido pela equipe', 5, 'estudante'],
-    ['Satisfação com a qualidade técnica do projeto', 5, 'estudante'],
-    ['Satisfação com a gestão do projeto (prospecção, planejamento e início da execução)', 5, 'estudante'],
-    ['Satisfação com os aspectos relacionais e a postura profissional da equipe', 5, 'estudante'],
+    // Avaliação Geral do Trabalho em Equipe (formulário do professor)
+    ['Satisfação global com o projeto', 5, 'estudante',
+      'Qual você considera ser o seu grau de SATISFAÇÃO GLOBAL com o Projeto desenvolvido por sua equipe neste semestre, como um todo, analisando de maneira abrangente?'],
+    ['Qualidade técnica do projeto', 5, 'estudante',
+      'Qual o seu grau de satisfação com a QUALIDADE TÉCNICA do Projeto desenvolvido por sua equipe neste semestre?'],
+    ['Gestão do projeto pela equipe', 5, 'estudante',
+      'Qual o seu grau de satisfação com a GESTÃO DO PROJETO por parte de sua equipe? Ao responder, leve em consideração as etapas de prospecção, planejamento e o início da execução do projeto.'],
+    ['Aspectos relacionais e postura profissional da equipe', 5, 'estudante',
+      'Qual o seu grau de satisfação com os ASPECTOS RELACIONAIS e com a POSTURA PROFISSIONAL das e dos integrantes de sua equipe de projeto?'],
     ['Nota do cliente', 20, 'cliente'],
   ];
-  // Critérios individuais (cada avaliador soma 100)
-  const individuais: [string, number, string][] = [
-    ['Desempenho individual global no desenvolvimento do projeto', 50, 'estudante'],
-    ['Contribuição ao trabalho e à produção da equipe', 50, 'estudante'],
+
+  // Critérios individuais (cada avaliador soma 100).
+  // Estudante: as mesmas 5 questões na autoavaliação e na avaliação cruzada (formulário do professor).
+  const individuais: Def[] = [
+    ['Desempenho individual global', 20, 'estudante',
+      'De maneira GLOBAL e considerando todo o semestre, como você avaliaria o desempenho individual de cada integrante de sua equipe?',
+      'De maneira GLOBAL e considerando todo o semestre, como você avaliaria o seu desempenho individual no desenvolvimento do Projeto de sua equipe?'],
+    ['Contribuição ao projeto', 20, 'estudante',
+      'Considerando todo o semestre, como você avaliaria a CONTRIBUIÇÃO ao Projeto de cada integrante de sua equipe? Considere aqui a quantidade e qualidade do que produziu, sua contribuição na gestão do projeto, sua disponibilidade, assim como a quantidade de tempo e esforço que dedicou ao projeto de sua equipe.',
+      'Considerando todo o semestre, como você avaliaria a sua CONTRIBUIÇÃO ao Projeto de sua equipe? Considere aqui a quantidade e qualidade do que produziu, sua contribuição na gestão do projeto, sua disponibilidade, assim como a quantidade de tempo e esforço que dedicou ao projeto de sua equipe.'],
+    ['Gestão do projeto', 20, 'estudante',
+      'Considerando todo o semestre, como você avaliaria o desempenho na GESTÃO DO PROJETO de cada integrante de sua equipe? Considere aqui aspectos como assiduidade, pontualidade, cumprimento de prazos acordados com a equipe e orientadores, assim como registro e compartilhamento de informações.',
+      'Considerando todo o semestre, como você avaliaria o seu desempenho na GESTÃO DO PROJETO? Considere aqui aspectos como assiduidade, pontualidade, cumprimento de prazos acordados com a equipe e orientadores, assim como registro e compartilhamento de informações.'],
+    ['Postura profissional', 20, 'estudante',
+      'Com relação à POSTURA PROFISSIONAL, como você avalia o desempenho de cada integrante de sua equipe ao longo do semestre? Considere aqui aspectos como comprometimento, responsabilidade e seriedade na condução do projeto e no trato com a empresa demandante e orientadores.',
+      'Com relação à POSTURA PROFISSIONAL, como você avalia seu desempenho ao longo do semestre? Considere aqui aspectos como comprometimento, responsabilidade e seriedade na condução do projeto e no trato com a empresa demandante e orientadores.'],
+    ['Relações interpessoais', 20, 'estudante',
+      'Com respeito às RELAÇÕES INTERPESSOAIS em sua equipe, como você avalia o desempenho de cada integrante de sua equipe ao longo do semestre? Considere aspectos como cordialidade e respeito no trato com colegas de equipe, assim como evitar e contribuir com a solução de conflitos.',
+      'Com respeito às RELAÇÕES INTERPESSOAIS em sua equipe, como você avalia seu desempenho ao longo do semestre? Considere aspectos como cordialidade e respeito no trato com colegas de equipe, assim como evitar e contribuir com a solução de conflitos.'],
+    // Orientadores: exemplos até chegarem os formulários deles
     ['Comprometimento e postura profissional', 50, 'gestao'],
     ['Cumprimento de prazos e entregas', 50, 'gestao'],
     ['Contribuição técnica', 50, 'execucao'],
     ['Qualidade das entregas técnicas', 50, 'execucao'],
   ];
+  // Frases das pontas da escala, como no formulário (projeto e autoavaliação)
+  const ANCORAS: Record<string, [string, string]> = {
+    "Satisfação global com o projeto": ["Muito baixo. Decepcionante.", "Muito alto! Excelente experiência!"],
+    "Qualidade técnica do projeto": ["Muito baixo. A produção da equipe neste semestre foi de muito baixa qualidade técnica.", "Muito alto! Considero que tudo o que produzimos neste semestre tem excelente qualidade técnica."],
+    "Gestão do projeto pela equipe": ["Muito baixo! O projeto foi muito mal planejado e gerido.", "Muito alto! O projeto foi muito bem planejado e gerido."],
+    "Aspectos relacionais e postura profissional da equipe": ["Muito baixo. A equipe teve baixo comprometimento e responsabilidade. Além disso, seus integrantes com frequência se portavam de maneira grosseira, desrespeitosa ou inadequada ao exercício profissional.", "Muito alto! A equipe sempre demonstrou comprometimento e responsabilidade. Além disso, seus integrantes sempre se portaram de maneira cordial, respeitosa e adequada ao exercício profissional."],
+    "Desempenho individual global": ["Muito ruim.", "Muito bom!"],
+    "Contribuição ao projeto": ["Muito baixa. Produzi pouco, não participei da gestão de projeto e dediquei muito menos tempo e esforço do que o restante da equipe.", "Muito alta! Contribuí de maneira relevante para as produções da equipe, participei ativamente da gestão do projeto e dediquei uma considerável quantidade de tempo e esforço ao projeto."],
+    "Gestão do projeto": ["Muito ruim. Fui muito ausente, frequentemente me atrasei e perdi prazos, além de não ter me preocupado com o registro e compartilhamento de informações.", "Muito bom! Fui sempre presente, pontual e cumpridor de prazos, além de sempre registrar e compartilhar informações."],
+    "Postura profissional": ["Muito ruim. Tive baixo comprometimento e responsabilidade com o projeto. Além disso, me equivoquei em alguns momentos no tratamento com a empresa demandante e orientadores.", "Muito bom! Tive alto grau de comprometimento e responsabilidade com o projeto. Além disso, sempre tratei a empresa demandante e orientadores de maneira cordial, respeitosa e adequada ao exercício profissional."],
+    "Relações interpessoais": ["Muito ruim. Me equivoquei em diversos momentos no tratamento com meus colegas de equipe, provocando conflitos.", "Muito bom! Sempre me portei de maneira cordial e respeitosa, assim como contribuí para evitar e solucionar conflitos."],
+  };
+
   const criterios: { id: number; tipo: string; fonte: string }[] = [];
   for (const [tipo, lista] of [['equipe', componentes], ['individual', individuais]] as const) {
-    for (const [i, [nome, peso, fonte]] of lista.entries()) {
+    for (const [i, [nome, peso, fonte, descricao, descricaoAuto]] of lista.entries()) {
       const [c] = await query<{ id: number }>(
-        'insert into criterio (ciclo_id, tipo, nome, peso, fonte, ordem) values ($1, $2, $3, $4, $5, $6) returning id',
-        [ciclo, tipo, nome, peso, fonte, i + 1],
+        `insert into criterio (ciclo_id, tipo, nome, peso, fonte, ordem, descricao, descricao_auto, ancora_min, ancora_max)
+         values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id`,
+        [ciclo, tipo, nome, peso, fonte, i + 1, descricao ?? null, descricaoAuto ?? null, ANCORAS[nome]?.[0] ?? null, ANCORAS[nome]?.[1] ?? null],
       );
       criterios.push({ id: c.id, tipo, fonte });
     }
   }
 
   // Cinco níveis (reunião de 19/11); valor na escala de 0 a 10 para o cálculo
-  const escala = [['Muito ruim', 2], ['Ruim', 4], ['Razoável', 6], ['Bom', 8], ['Muito bom', 10]] as const;
+  const escala = [['Muito ruim', 2], ['Ruim', 4], ['Razoável', 6], ['Bom', 8], ['Muito bom', 10]] as const; // rótulos do formulário
   for (const [rotulo, valor] of escala) {
     await query('insert into escala (ciclo_id, rotulo, valor) values ($1, $2, $3)', [ciclo, rotulo, valor]);
   }
@@ -135,6 +181,17 @@ async function main() {
           }
         }
       }
+    }
+
+    // Comentários de exemplo (aparecem anônimos para gestão e coordenação)
+    const comentar = (autor: number, tipo: string, texto: string) =>
+      query('insert into comentario (ciclo_id, equipe_id, avaliador_id, tipo, texto) values ($1, $2, $3, $4, $5)', [ciclo, equipe, autor, tipo, texto]);
+    await comentar(membros[0], 'projeto', 'A equipe se organizou bem nas entregas, mas a comunicação com o cliente demorou a engrenar.');
+    await comentar(membros[1], 'auto', 'Poderia ter assumido mais tarefas de documentação.');
+    if (colegasAvaliaram) {
+      const primeira = criterios.find((c) => c.tipo === 'individual' && c.fonte === 'estudante')!;
+      await comentar(membros[2], `colegas:${primeira.id}`, 'Todos participaram, mas a carga ficou concentrada em duas pessoas.');
+      await comentar(membros[2], 'geral', 'A orientação de execução técnica foi muito útil; sugiro mais checkpoints com o cliente.');
     }
   }
 

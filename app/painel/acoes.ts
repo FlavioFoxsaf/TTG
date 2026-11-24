@@ -41,7 +41,7 @@ const PERFIS_CSV: Record<string, string> = {
   orientador_execucao: 'execucao',
 };
 
-// RF01 / HU01: importa CSV com colunas nome, email, matricula e, opcionalmente, perfil.
+// RF01 / HU01: importa CSV com colunas nome, email, matricula e, opcionalmente, perfil e curso.
 // A senha inicial é a matrícula. Linhas com erro são listadas sem interromper as demais.
 export async function importarUsuarios(form: FormData) {
   const s = await exigirPerfil('gestao');
@@ -59,6 +59,7 @@ export async function importarUsuarios(form: FormData) {
     const nome = l.nome?.trim();
     const email = l.email?.trim().toLowerCase();
     const matricula = l.matricula?.trim();
+    const curso = l.curso?.trim() || null;
     const informado = l.perfil?.trim().toLowerCase() || 'estudante';
     const perfil = PERFIS_CSV[informado];
 
@@ -72,9 +73,10 @@ export async function importarUsuarios(form: FormData) {
     }
     try {
       await query(
-        `insert into usuario (nome, email, matricula, perfil, senha_hash) values ($1, $2, $3, $4, $5)
-         on conflict (email) do update set nome = excluded.nome, matricula = excluded.matricula, perfil = excluded.perfil`,
-        [nome, email, matricula, perfil, await bcrypt.hash(matricula, 10)],
+        `insert into usuario (nome, email, matricula, perfil, curso, senha_hash) values ($1, $2, $3, $4, $5, $6)
+         on conflict (email) do update set nome = excluded.nome, matricula = excluded.matricula, perfil = excluded.perfil,
+           curso = coalesce(excluded.curso, usuario.curso)`,
+        [nome, email, matricula, perfil, curso, await bcrypt.hash(matricula, 10)],
       );
       importados++;
     } catch (e) {
@@ -206,6 +208,10 @@ export async function salvarCriterios(form: FormData) {
       peso: numero(form, `peso_${c.id}`),
       fonte: texto(form, `fonte_${c.id}`) || null,
       ordem: numero(form, `ordem_${c.id}`) || 0,
+      descricao: texto(form, `descricao_${c.id}`) || null,
+      descricao_auto: c.tipo === 'individual' ? texto(form, `descricao_auto_${c.id}`) || null : null,
+      ancora_min: texto(form, `ancora_min_${c.id}`) || null,
+      ancora_max: texto(form, `ancora_max_${c.id}`) || null,
     }));
   const novo = texto(form, 'novo_nome')
     ? { tipo: texto(form, 'novo_tipo') as 'equipe' | 'individual', nome: texto(form, 'novo_nome'), peso: numero(form, 'novo_peso'), fonte: texto(form, 'novo_fonte') || null }
@@ -222,11 +228,15 @@ export async function salvarCriterios(form: FormData) {
       if (form.get(`remover_${c.id}`)) await q('delete from criterio where id = $1', [c.id]);
     }
     for (const c of mantidos) {
-      await q('update criterio set nome = $1, peso = $2, fonte = $3, ordem = $4 where id = $5', [c.nome, c.peso, c.fonte, c.ordem, c.id]);
+      await q(
+        `update criterio set nome = $1, peso = $2, fonte = $3, ordem = $4, descricao = $5, descricao_auto = $6,
+           ancora_min = $7, ancora_max = $8 where id = $9`,
+        [c.nome, c.peso, c.fonte, c.ordem, c.descricao, c.descricao_auto, c.ancora_min, c.ancora_max, c.id],
+      );
     }
     if (novo) {
-      await q('insert into criterio (ciclo_id, tipo, nome, peso, fonte, ordem) values ($1, $2, $3, $4, $5, 99)', [
-        ciclo.id, novo.tipo, novo.nome, novo.peso, novo.fonte,
+      await q('insert into criterio (ciclo_id, tipo, nome, peso, fonte, ordem, descricao) values ($1, $2, $3, $4, $5, 99, $6)', [
+        ciclo.id, novo.tipo, novo.nome, novo.peso, novo.fonte, texto(form, 'novo_descricao') || null,
       ]);
     }
   });
@@ -271,8 +281,9 @@ export async function novoCiclo(form: FormData) {
       );
       if (anterior) {
         await q(
-          `insert into criterio (ciclo_id, tipo, nome, peso, fonte, ordem)
-           select $1, tipo, nome, peso, fonte, ordem from criterio where ciclo_id = $2`,
+          `insert into criterio (ciclo_id, tipo, nome, peso, fonte, ordem, descricao, descricao_auto, ancora_min, ancora_max)
+           select $1, tipo, nome, peso, fonte, ordem, descricao, descricao_auto, ancora_min, ancora_max
+           from criterio where ciclo_id = $2`,
           [c.id, anterior.id],
         );
         await q('insert into escala (ciclo_id, rotulo, valor) select $1, rotulo, valor from escala where ciclo_id = $2', [c.id, anterior.id]);

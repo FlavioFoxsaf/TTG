@@ -100,7 +100,10 @@ export default async function Configuracao({ searchParams }: { searchParams: Pro
                   <td>
                     <select name="novo_tipo"><option value="equipe">equipe</option><option value="individual">individual</option></select>
                   </td>
-                  <td><input name="novo_nome" placeholder="Novo critério" style={{ width: '100%' }} /></td>
+                  <td>
+                    <input name="novo_nome" placeholder="Novo critério (título curto)" style={{ width: '100%' }} />
+                    <textarea name="novo_descricao" placeholder="Texto completo da pergunta (opcional)" style={{ minHeight: 50 }} />
+                  </td>
                   <td><input name="novo_peso" defaultValue={0} style={{ width: 70 }} /></td>
                   <td><SelectFonte nome="novo_fonte" tipo="equipe" /></td>
                   <td colSpan={2}></td>
@@ -189,7 +192,21 @@ function LinhaCriterio({ c }: { c: Criterio }) {
   return (
     <tr>
       <td>{c.tipo}</td>
-      <td><input name={`nome_${c.id}`} defaultValue={c.nome} style={{ width: '100%' }} /></td>
+      <td>
+        <input name={`nome_${c.id}`} defaultValue={c.nome} style={{ width: '100%' }} />
+        <details>
+          <summary className="suave">texto completo da pergunta{c.descricao ? '' : ' (vazio)'}</summary>
+          <textarea name={`descricao_${c.id}`} defaultValue={c.descricao ?? ''} placeholder="Como a pergunta aparece no formulário" />
+          {c.tipo === 'individual' && (
+            <textarea
+              name={`descricao_auto_${c.id}`} defaultValue={c.descricao_auto ?? ''}
+              placeholder="Versão em primeira pessoa para a autoavaliação (vazio = usa o texto acima)"
+            />
+          )}
+          <input name={`ancora_min_${c.id}`} defaultValue={c.ancora_min ?? ''} placeholder="Frase da nota mais baixa (opcional)" style={{ width: '100%', marginTop: 4 }} />
+          <input name={`ancora_max_${c.id}`} defaultValue={c.ancora_max ?? ''} placeholder="Frase da nota mais alta (opcional)" style={{ width: '100%', marginTop: 4 }} />
+        </details>
+      </td>
       <td><input name={`peso_${c.id}`} defaultValue={c.peso} style={{ width: 70 }} /></td>
       <td><SelectFonte nome={`fonte_${c.id}`} tipo={c.tipo} valor={c.fonte} /></td>
       <td><input name={`ordem_${c.id}`} defaultValue={c.ordem} style={{ width: 55 }} /></td>

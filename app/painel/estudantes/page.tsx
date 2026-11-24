@@ -6,8 +6,8 @@ import { importarUsuarios } from '../acoes';
 // RF01 / HU01: importação da lista de matrícula
 export default async function Estudantes({ searchParams }: { searchParams: Promise<{ ok?: string; erro?: string }> }) {
   await exigirPerfil('gestao');
-  const usuarios = await query<{ id: number; nome: string; email: string; matricula: string; perfil: Perfil }>(
-    `select id, nome, email, matricula, perfil from usuario where perfil <> 'coordenacao' order by perfil, nome`,
+  const usuarios = await query<{ id: number; nome: string; email: string; matricula: string; curso: string | null; perfil: Perfil }>(
+    `select id, nome, email, matricula, curso, perfil from usuario where perfil <> 'coordenacao' order by perfil, nome`,
   );
 
   return (
@@ -16,7 +16,7 @@ export default async function Estudantes({ searchParams }: { searchParams: Promi
       <section className="cartao">
         <h2>Importar estudantes e orientadores</h2>
         <p className="suave">
-          Arquivo CSV com as colunas <code>nome, email, matricula</code> e, opcionalmente, <code>perfil</code>{' '}
+          Arquivo CSV com as colunas <code>nome, email, matricula</code> e, opcionalmente, <code>curso</code> e <code>perfil</code>{' '}
           (<code>estudante</code>, <code>gestao</code> para orientador de gestão de projetos ou <code>execucao</code> para
           orientador de execução técnica; vazio = estudante). A senha inicial de cada usuário é a matrícula. E-mails já cadastrados são atualizados.
         </p>
@@ -30,11 +30,11 @@ export default async function Estudantes({ searchParams }: { searchParams: Promi
         <h2>Usuários cadastrados ({usuarios.length})</h2>
         <table>
           <thead>
-            <tr><th>Nome</th><th>E-mail</th><th>Matrícula</th><th>Perfil</th></tr>
+            <tr><th>Nome</th><th>E-mail</th><th>Matrícula</th><th>Curso</th><th>Perfil</th></tr>
           </thead>
           <tbody>
             {usuarios.map((u) => (
-              <tr key={u.id}><td>{u.nome}</td><td>{u.email}</td><td>{u.matricula}</td><td>{NOME_PERFIL[u.perfil]}</td></tr>
+              <tr key={u.id}><td>{u.nome}</td><td>{u.email}</td><td>{u.matricula}</td><td>{u.curso ?? '—'}</td><td>{NOME_PERFIL[u.perfil]}</td></tr>
             ))}
           </tbody>
         </table>

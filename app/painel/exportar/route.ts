@@ -2,7 +2,7 @@ import ExcelJS from 'exceljs';
 import { auditar, query } from '@/lib/db';
 import { lerSessao } from '@/lib/auth';
 import { NOME_PAPEL, type Papel } from '@/lib/calculo';
-import { buscarCiclo, listarEquipes, listarResultados, nomeCiclo, relatorioAvaliacoes } from '@/lib/dados';
+import { buscarCiclo, comentariosDoCiclo, listarEquipes, listarResultados, nomeCiclo, relatorioAvaliacoes } from '@/lib/dados';
 
 const duas = (n: number | null) => (n == null ? null : Math.round(n * 100) / 100);
 
@@ -35,10 +35,11 @@ export async function GET(req: Request) {
   const resultados = ciclo ? await listarResultados(ciclo.id) : [];
   if (!ciclo || !resultados.length) return new Response('Calcule as notas do ciclo antes de exportar.', { status: 400 });
 
-  const [equipes, avaliacoes, orientadores] = await Promise.all([
+  const [equipes, avaliacoes, orientadores, comentarios] = await Promise.all([
     listarEquipes(ciclo.id),
     relatorioAvaliacoes(ciclo.id),
     query<{ id: number; nome: string }>(`select id, nome from usuario where perfil in ('gestao', 'execucao')`),
+    comentariosDoCiclo(ciclo.id),
   ]);
   const nomeDe = (id: number | null) => orientadores.find((o) => o.id === id)?.nome ?? '';
 
@@ -102,6 +103,7 @@ export async function GET(req: Request) {
       { header: 'Equipe', key: 'equipe', width: 16 },
       { header: 'Matrícula', key: 'matricula', width: 14 },
       { header: 'Estudante', key: 'estudante', width: 32 },
+      { header: 'Curso', key: 'curso', width: 28 },
       { header: 'Nota da equipe', key: 'nota_equipe', width: 14, numero: true },
       ...fontes.map((f, i) => ({ header: `${f.nome} (peso ${f.peso})`, key: `f${i}`, width: 20, numero: true })),
       { header: 'Conceito individual', key: 'conceito', width: 16, numero: true },
@@ -113,6 +115,7 @@ export async function GET(req: Request) {
       equipe: r.equipe,
       matricula: r.matricula,
       estudante: r.estudante,
+      curso: r.curso ?? '',
       nota_equipe: duas(r.nota_equipe),
       ...Object.fromEntries(r.memoria.fontes.map((f, i) => [`f${i}`, duas(f.valor)])),
       conceito: duas(r.conceito),
@@ -172,6 +175,18 @@ export async function GET(req: Request) {
       valor: a.valor,
       atualizado_em: a.atualizado_em,
     })),
+  );
+
+  // 7. Comentários dos estudantes, sem autor (confidencial)
+  aba(
+    planilha,
+    'Comentários',
+    [
+      { header: 'Equipe', key: 'equipe', width: 16 },
+      { header: 'Seção', key: 'rotulo', width: 40 },
+      { header: 'Comentário', key: 'texto', width: 100 },
+    ],
+    comentarios.map((c) => ({ equipe: c.equipe, rotulo: c.rotulo, texto: c.texto })),
   );
 
   await auditar(s.id, 'exportação', `ciclo ${ciclo.id}`);

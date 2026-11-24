@@ -150,3 +150,25 @@ alter table usuario add constraint usuario_perfil_check
 alter table criterio drop constraint if exists criterio_fonte_check;
 alter table criterio add constraint criterio_fonte_check
   check (fonte in ('orientador', 'gestao', 'execucao', 'estudante', 'cliente'));
+
+-- ---------------------------------------------------------------------------
+-- Migração 2026-11-24 (formulário "Avaliação 360º - Equipe" do professor). Segura para rodar de novo.
+-- ---------------------------------------------------------------------------
+
+-- Texto completo da pergunta. descricao: como aparece para orientadores e na avaliação cruzada;
+-- descricao_auto: versão em primeira pessoa usada na autoavaliação (vazia = usa descricao)
+alter table criterio add column if not exists descricao      text;
+alter table criterio add column if not exists descricao_auto text;
+
+-- Curso do estudante (o formulário pede; útil para análises da coordenação)
+alter table usuario add column if not exists curso text;
+
+-- Vários comentários por avaliador: projeto | auto | geral | colegas:<criterio_id>
+alter table comentario add column if not exists tipo text not null default 'projeto';
+alter table comentario drop constraint if exists comentario_pkey;
+alter table comentario add constraint comentario_pkey primary key (equipe_id, avaliador_id, tipo);
+
+-- Frases das pontas da escala (ex.: "Muito baixo. Decepcionante." / "Muito alto! Excelente experiência!").
+-- Aparecem na avaliação do projeto e na autoavaliação, como no formulário do professor.
+alter table criterio add column if not exists ancora_min text;
+alter table criterio add column if not exists ancora_max text;

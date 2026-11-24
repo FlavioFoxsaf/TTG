@@ -73,10 +73,15 @@ export default async function Resultados({ searchParams }: { searchParams: Promi
               </table>
               {comentarios.some((c) => c.equipe === equipe) && (
                 <details style={{ marginTop: 8 }}>
-                  <summary>Comentários dos estudantes sobre o trabalho em equipe (anônimos)</summary>
-                  <ul>
-                    {comentarios.filter((c) => c.equipe === equipe).map((c, i) => <li key={i}>{c.texto}</li>)}
-                  </ul>
+                  <summary>Comentários dos estudantes ({comentarios.filter((c) => c.equipe === equipe).length}, anônimos)</summary>
+                  {[...new Set(comentarios.filter((c) => c.equipe === equipe).map((c) => c.rotulo))].map((rotulo) => (
+                    <div key={rotulo}>
+                      <p style={{ margin: '8px 0 2px' }}><strong>{rotulo}</strong></p>
+                      <ul style={{ marginTop: 0 }}>
+                        {comentarios.filter((c) => c.equipe === equipe && c.rotulo === rotulo).map((c, i) => <li key={i}>{c.texto}</li>)}
+                      </ul>
+                    </div>
+                  ))}
                 </details>
               )}
             </div>
