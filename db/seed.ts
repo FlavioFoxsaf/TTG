@@ -1,6 +1,6 @@
 // Dados fictícios para demonstração (npm run seed).
 // As perguntas do estudante (projeto, autoavaliação e avaliação cruzada) são as do formulário
-// "[PADRÃO] AOP-TTG FI Avaliação 360º - Equipe" do professor (recebido em 24/11).
+// "[PADRÃO] AOP-TTG FI Avaliação 360º - Equipe" do professor (recebido em 24/11; conferido com o PDF do formulário).
 // Critérios dos orientadores, pesos e valores numéricos da escala ainda são EXEMPLOS.
 import bcrypt from 'bcryptjs';
 import { fechar, query } from '../lib/db';

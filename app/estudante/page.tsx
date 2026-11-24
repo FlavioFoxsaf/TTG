@@ -118,6 +118,19 @@ async function Avaliacao(p: { aba: string; estudanteId: number; ciclo: Ciclo; eq
     );
   return (
     <>
+      {/* Abertura do formulário "Avaliação 360º - Equipe" do professor */}
+      <div className="aviso" style={{ marginBottom: 16 }}>
+        Esse questionário tem o objetivo de servir como instrumento para que a equipe faça uma autoavaliação a respeito
+        de seu desempenho no Projeto de Trilha. Cada integrante da equipe deve se avaliar e avaliar seus colegas de
+        equipe, em quatro seções: Avaliação Geral do Trabalho em Equipe, Autoavaliação, Avaliação Cruzada e Comentários
+        Gerais (opcional).
+        <br />
+        <strong>
+          Reflita ao atribuir os conceitos para que o faça de maneira justa, uma vez que este formulário será um dos
+          insumos para a nota no Projeto PPS neste semestre.
+        </strong>{' '}
+        Questionário a ser respondido individualmente.
+      </div>
       <h2>Avaliação geral do trabalho em equipe</h2>
       <p className="suave">Nesta seção você deve avaliar o trabalho de sua equipe enquanto grupo (1 = muito baixo, 5 = muito alto).</p>
       <FormAvaliacao
